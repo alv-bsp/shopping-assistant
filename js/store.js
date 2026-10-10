@@ -24,7 +24,7 @@ function fresh() {
   };
 }
 
-function migrate(s) {
+export function migrate(s) {
   s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) };
   s.plans ||= {}; s.storeOf ||= {}; s.pantry ||= [];
   // nuove ricette aggiunte al seed in versioni successive vengono unite senza toccare quelle esistenti

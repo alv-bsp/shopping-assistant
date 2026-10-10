@@ -1,0 +1,20 @@
+# Una lettura al giorno sul database, così il progetto Supabase gratuito non va in pausa
+# (succede dopo ~7 giorni senza attività, es. durante una vacanza).
+# URL e chiave publishable sono letti da js/config.js: nessun secret da configurare.
+name: Supabase keep-alive
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping database
+        run: |
+          URL=$(grep -oP 'SUPABASE_URL = "\K[^"]+' js/config.js)
+          KEY=$(grep -oP 'SUPABASE_KEY = "\K[^"]+' js/config.js || true)
+          if [ -z "$KEY" ]; then echo "Chiave Supabase non configurata, salto"; exit 0; fi
+          curl -fsS "$URL/rest/v1/kv?select=key&limit=1" -H "apikey: $KEY" -o /dev/null -w "HTTP %{http_code}\n"

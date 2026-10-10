@@ -1,5 +1,6 @@
 // UI: rendering con template string + event delegation (data-a = azione al click).
-import { load, save, reset, importBackup, plan } from "./store.js";
+import { load, save, reset, importBackup, plan, migrate } from "./store.js";
+import * as sync from "./sync.js";
 import { generateWeek, pickForSlot, key, splitKey, rate, markDone, MEALS } from "./planner.js";
 import { buildList, groupBy, asText, fmtQty, CATS, CAT_LABEL, STORES, ingredientsOf, parseIngredientLine } from "./shopping.js";
 import { weekKey, weekDays, addDays, today, fmtWeek, fmtDay, dayIndex, DAY_SHORT, DAY_LONG, norm, uid, slug, esc } from "./util.js";
@@ -10,7 +11,8 @@ const startWeek = dayIndex(today()) >= 5 && !Object.keys(state.plans[weekKey()]?
 const ui = { tab: "menu", wk: startWeek,listMode: "cat", hideChecked: false, meal: "cena", status: "rotazione", q: "", pantryFilter: "all" };
 const $ = (s) => document.querySelector(s);
 const R = (id) => state.recipes.find((r) => r.id === id);
-const commit = () => { save(state); render(); };
+const commit = () => { save(state); sync.schedule(); render(); };
+const SYNC_LABEL = { synced: "Sincronizzato", syncing: "Sincronizzo…", offline: "Offline: le modifiche partono quando torna la rete", error: "Errore di sincronizzazione", starting: "Avvio…" };
 
 // ---------------------------------------------------------------- helpers
 const EFFORT = { 1: "Facile", 2: "Medio", 3: "Impegnativo" };
@@ -37,10 +39,37 @@ const SOURCE = { hellofresh: "HelloFresh", casa: "Di casa", claude: "Nuova", mia
 
 // ---------------------------------------------------------------- render
 function render() {
+  const needLogin = sync.enabled && sync.getStatus() === "signed-out";
+  document.body.classList.toggle("logged-out", needLogin);
+  if (needLogin) { $("#view").innerHTML = viewLogin(); return; }
   document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === ui.tab ? "page" : "false"));
   const v = { menu: viewMenu, spesa: viewSpesa, ricette: viewRicette, dispensa: viewDispensa }[ui.tab]();
   $("#view").innerHTML = v;
   if (ui.tab === "ricette") renderRecipeList();
+}
+
+// un aggiornamento arrivato dall'altro telefono non deve far perdere il focus a chi sta scrivendo
+function safeRender() {
+  const a = document.activeElement;
+  if (a && a.closest("#view") && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) {
+    a.addEventListener("blur", () => setTimeout(render, 0), { once: true });
+  } else render();
+}
+function updateSyncDot(st, detail) {
+  const d = $("#sync-dot"); if (!d) return;
+  d.hidden = st === "local" || st === "signed-out";
+  d.dataset.state = st; d.title = SYNC_LABEL[st] + (detail ? `: ${detail}` : "");
+}
+
+// ---- Login (solo se Supabase è configurato)
+function viewLogin() {
+  return `<div class="empty login"><div class="empty-art">🍽️</div><h2>Accedi</h2>
+    <p>Una volta per dispositivo. Menu e lista restano sincronizzati fra i vostri telefoni.</p>
+    <form class="form" data-form="login">
+      <input name="email" type="email" autocomplete="username" required placeholder="Email" aria-label="Email">
+      <input name="password" type="password" autocomplete="current-password" required placeholder="Password" aria-label="Password">
+      <button class="btn primary big">Entra</button>
+    </form></div>`;
 }
 
 function weekBar() {
@@ -321,8 +350,11 @@ function sheetSettings() {
       <label>Sforzo massimo lun–ven <select data-change="setting" data-k="maxEffortWeekday">${[1, 2, 3].map((v) => `<option value="${v}" ${st.maxEffortWeekday === v ? "selected" : ""}>${v} · ${EFFORT[v]}</option>`).join("")}</select></label>
       <label>Giorni prima di riproporre un piatto ${num("noRepeatDays", 0, 60)}</label>
     </div>
+    <h3>Account</h3>
+    ${sync.enabled ? (sync.getUser() ? `<div class="row"><div><div>${esc(sync.getUser().email)}</div><small class="muted">${SYNC_LABEL[sync.getStatus()] || ""}</small></div><button class="btn small" data-a="logout">Esci</button></div>`
+      : '<p class="hint">Non connesso.</p>') : '<p class="hint">Sincronizzazione non configurata: i dati vivono solo in questo browser.</p>'}
     <h3>Dati</h3>
-    <p class="hint">Per ora i dati vivono solo in questo browser. Esporta un backup per spostarli o condividerli.</p>
+    <p class="hint">Esporta un backup per sicurezza o per spostare i dati.</p>
     <div class="actions">
       <button class="btn" data-a="export">Esporta backup</button>
       <label class="btn">Importa backup<input type="file" accept="application/json" data-change="import-file" hidden></label>
@@ -424,6 +456,7 @@ const actions = {
   "pantry-del": (d) => { state.pantry = state.pantry.filter((y) => y.name !== d.name); commit(); },
   "pantry-filter": (d) => { ui.pantryFilter = d.f; render(); },
   settings: () => sheetSettings(),
+  logout: async () => { await sync.signOut(); closeSheet(); render(); },
   export: () => {
     const blob = new Blob([JSON.stringify(state, null, 1)], { type: "application/json" });
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `cosa-mangiamo-${today()}.json` });
@@ -434,6 +467,11 @@ const actions = {
 };
 
 const forms = {
+  login: async (f, form) => {
+    const btn = form.querySelector("button"); btn.disabled = true; btn.textContent = "Entro…";
+    try { await sync.signIn(f.get("email").trim().toLowerCase(), f.get("password")); }
+    catch (e) { btn.disabled = false; btn.textContent = "Entra"; toast(/invalid/i.test(e.message) ? "Email o password sbagliate" : e.message); }
+  },
   extra: (f, form) => {
     const name = f.get("name").trim(); if (!name) return;
     const p = plan(state, ui.wk); p.extras ||= [];
@@ -522,5 +560,11 @@ document.addEventListener("change", async (e) => {
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
 
 render();
+sync.init({
+  getState: () => state,
+  normalize: migrate,
+  onRemote: (s) => { state = s; save(state); safeRender(); },
+  onStatus: (st, detail) => { updateSyncDot(st, detail); if (st === "signed-out" || document.body.classList.contains("logged-out")) render(); },
+});
 if (ui.tab === "menu") setTimeout(() => document.getElementById("today")?.scrollIntoView({ block: "center", behavior: "smooth" }), 50);
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});

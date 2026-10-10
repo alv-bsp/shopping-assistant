@@ -29,9 +29,16 @@ Per provarla sull'iPhone nella stessa rete: `http://<ip-del-mac>:8080`. L'instal
 
 ## Dati
 
-- Per ora vivono in `localStorage` del browser: ogni dispositivo ha i suoi. Backup ed export/import da ⚙︎.
-- Tutta la persistenza passa da `js/store.js` (`load`/`save`): per sincronizzare i due telefoni basta sostituire quel file
-  (es. Supabase o un piccolo backend sul homelab).
+- Copia locale in `localStorage` (l'app si apre subito e funziona offline), sincronizzata con Supabase
+  se `js/config.js` contiene la chiave publishable. Senza chiave l'app resta solo locale.
+- Supabase: una tabella `kv` (chiave → JSON) con righe `recipe:<id>`, `plan:<settimana>`, `pantry`, `settings`,
+  `storeOf`, `meta`. `js/sync.js` invia solo le righe cambiate, riceve quelle dell'altro telefono in realtime e,
+  per ogni riga, fa vincere l'ultima scrittura senza mai sovrascrivere una modifica locale non ancora inviata.
+- Accesso con email e password (una volta per dispositivo), solo per i due utenti creati in Supabase con le
+  registrazioni chiuse; le policy RLS limitano la tabella alle due email. Niente magic link: su iPhone la PWA
+  installata non condivide il login con Safari.
+- `.github/workflows/supabase-keepalive.yml` fa una lettura al giorno per evitare la pausa del piano gratuito.
+- Backup ed export/import da ⚙︎.
 - `js/seed.js` è generato da `tools/build_seed.py` (ricette di casa + 16 HelloFresh estratte in
   `tools/recipes_hellofresh.json` + sorprese da provare + dispensa). Le quantità sono per 2 persone,
   in unità da supermercato.

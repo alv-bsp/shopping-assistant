@@ -205,3 +205,13 @@ textarea { resize: vertical; }
   pointer-events: none; transition: .2s; z-index: 30; max-width: calc(100% - 32px); text-align: center;
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- sync e login */
+.top-actions { display: flex; align-items: center; gap: 4px; }
+.sync-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); }
+.sync-dot[data-state="syncing"], .sync-dot[data-state="starting"] { background: var(--warn); animation: pulse 1s ease-in-out infinite; }
+.sync-dot[data-state="offline"] { background: var(--muted); }
+.sync-dot[data-state="error"] { background: #c0392b; }
+@keyframes pulse { 50% { opacity: .35; } }
+body.logged-out .tabbar, body.logged-out [data-a="settings"] { display: none; }
+.login .form { max-width: 340px; margin: 0 auto; text-align: left; }
