@@ -3,8 +3,8 @@
 PWA per il menu settimanale di casa (Alessandro e Giulia) e la lista della spesa che ne deriva.
 Vanilla JS, nessuna build, nessuna dipendenza.
 
-Stile "da cucina": carta crema, titoli in Fraunces (font incluso in `fonts/`, licenza OFL), pomodoro come unico
-accento forte, icone Lucide inline (`js/icons.js`, licenza ISC). Tema chiaro e scuro automatici.
+Palette "Salvia": grigio appena verde, card bianche, verde bosco come unico accento forte; font Plus Jakarta Sans
+(incluso in `fonts/`, licenza OFL), icone Lucide inline (`js/icons.js`, licenza ISC). Tema chiaro e scuro automatici.
 
 ## Avvio in locale
 
