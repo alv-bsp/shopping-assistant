@@ -10,6 +10,7 @@
   --ink: #14201a; --ink-2: #4e5e55; --ink-3: #9aa8a0;
   --accent: #1f7a55; --accent-ink: #ffffff; --accent-soft: #dcf0e5;
   --ok: #2f8f5b; --ok-soft: #dff3e7; --warn: #c47f17; --warn-soft: #fbefd9;
+  --danger: #d43f2f; --danger-soft: #fde5e1;
   /* tinte per i tipi di piatto: fondo / inchiostro */
   --t-tomato: #fde6e1; --t-tomato-i: #c2412d;
   --t-saffron: #fdefd3; --t-saffron-i: #a86a06;
@@ -35,6 +36,7 @@
     --ink: #e9efeb; --ink-2: #a6b3ab; --ink-3: #6d7a72;
     --accent: #4fbf8b; --accent-ink: #0d1310; --accent-soft: #183327;
     --ok: #5fcf8f; --ok-soft: #1a3326; --warn: #e2ad55; --warn-soft: #3a2f1c;
+    --danger: #f07a68; --danger-soft: #3d201c;
     --t-tomato: #3a2320; --t-tomato-i: #f0937a;
     --t-saffron: #382d18; --t-saffron-i: #e9b862;
     --t-sea: #173230; --t-sea-i: #8ccac3;
@@ -53,6 +55,7 @@
     --ink: #e9efeb; --ink-2: #a6b3ab; --ink-3: #6d7a72;
     --accent: #4fbf8b; --accent-ink: #0d1310; --accent-soft: #183327;
     --ok: #5fcf8f; --ok-soft: #1a3326; --warn: #e2ad55; --warn-soft: #3a2f1c;
+    --danger: #f07a68; --danger-soft: #3d201c;
     --t-tomato: #3a2320; --t-tomato-i: #f0937a;
     --t-saffron: #382d18; --t-saffron-i: #e9b862;
     --t-sea: #173230; --t-sea-i: #8ccac3;
@@ -99,7 +102,7 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); margin-right: 6px; transition: background .3s; }
 .sync-dot[data-state="syncing"], .sync-dot[data-state="starting"] { background: var(--warn); animation: pulse 1s ease-in-out infinite; }
 .sync-dot[data-state="offline"] { background: var(--ink-3); }
-.sync-dot[data-state="error"] { background: var(--accent); }
+.sync-dot[data-state="error"] { background: var(--danger); }
 @keyframes pulse { 50% { opacity: .35; } }
 
 .view { max-width: 640px; margin: 0 auto; padding: 4px var(--gutter) 24px; }
@@ -126,7 +129,7 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn.soft { background: var(--surface-2); border-color: transparent; }
 .btn.ghost { background: transparent; border-color: transparent; }
-.btn.danger { color: var(--accent); }
+.btn.danger { color: var(--danger); }
 .btn.small { min-height: 34px; padding: 0 12px; font-size: .86rem; }
 .btn.block { width: 100%; min-height: 52px; font-size: 1rem; }
 .icon-btn { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink-2); flex: none; transition: background .15s, color .15s; }
@@ -189,9 +192,10 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .day-pill .dn { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .day-pill .dd { font-family: var(--display); font-size: 1.15rem; font-weight: 650; color: var(--ink); line-height: 1.1; font-variant-numeric: tabular-nums; }
 .day-pill .mark { width: 5px; height: 5px; border-radius: 50%; background: transparent; margin-top: 2px; }
-.day-pill.is-today .mark { background: var(--accent); }
+.day-pill.is-today .mark { background: var(--ink); }
 .day-pill.has-done .mark { background: var(--ok); }
-.day-pill.is-today.has-done .mark { background: var(--accent); }
+.day-pill.is-today.has-done .mark { background: var(--ok); }
+.day-pill[aria-pressed="true"].is-today .mark { background: var(--bg); }
 .day-pill[aria-pressed="true"] { background: var(--ink); color: color-mix(in srgb, var(--bg) 75%, transparent); }
 .day-pill[aria-pressed="true"] .dd { color: var(--bg); }
 .day-pill.is-empty .dd { color: var(--ink-3); }
@@ -222,7 +226,7 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .thumb { width: 44px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; color: var(--ink-2); transition: background .15s, color .15s, transform .12s; }
 .thumb:active { transform: scale(.92); }
 .thumb.up.on { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
-.thumb.down.on { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.thumb.down.on { background: var(--danger-soft); border-color: transparent; color: var(--danger); }
 
 .lunches { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
 .lunch { text-align: left; border: 0; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 14px 14px 13px; display: flex; flex-direction: column; gap: 10px; min-height: 128px; }
@@ -298,7 +302,7 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .pchip:active { transform: scale(.95); }
 .pchip .st { font-size: .7rem; font-weight: 750; letter-spacing: .05em; text-transform: uppercase; }
 .pchip.poco { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
-.pchip.finito { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.pchip.finito { background: var(--danger-soft); border-color: transparent; color: var(--danger); }
 .pchip .x { margin-right: -4px; color: var(--ink-3); }
 .pgroup + .pgroup { margin-top: 22px; }
 .pgroup h4 { margin: 0 2px 10px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
@@ -345,7 +349,7 @@ code { font-size: .85em; background: var(--surface-2); padding: 0 .3em; border-r
 .action-list button { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border: 0; border-top: 1px solid var(--line); background: transparent; text-align: left; font-weight: 550; }
 .action-list button:first-child { border-top: 0; }
 .action-list button .i { color: var(--ink-2); }
-.action-list button.danger, .action-list button.danger .i { color: var(--accent); }
+.action-list button.danger, .action-list button.danger .i { color: var(--danger); }
 .action-list small { margin-left: auto; color: var(--ink-3); font-weight: 500; }
 .ings { list-style: none; margin: 0; padding: 0; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); }
 .ings li { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); }
