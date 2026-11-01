@@ -220,15 +220,16 @@ for r in recipes:
     if r["meal"] == "pranzo" and r["source"] == "claude" and r["id"] != "new-insalata-quinoa": r["serves"] = 2
 
 # Spesa fissa: quello che entra in lista ogni settimana, indipendente dal menu (dalla spesa Iperal tipica)
-RECURRING = ["5 conf Coca Cola Zero (10 lattine)","3 pz Yogurt colato Fage 0%","1 conf Mirtilli","1 conf More","3 conf Cornetti Tre Marie",
-  "1 conf Crackers Schär","1 conf Kinder Pinguì","1 conf Fonzies multipack","2 conf Fesa di tacchino Amadori","1 conf Prosciutto cotto Beretta",
-  "1 conf Prosciutto crudo Citterio","1 conf Philadelphia light","1 conf Sottilette light","2 pz Mozzarella light","1 conf Feta greca","1 conf Pan bauletto bianco"]
+RECURRING = ["3 pz Yogurt colato Fage 0%","1 conf Mirtilli","1 conf More","1 conf Crackers Schär","2 conf Fesa di tacchino Amadori",
+  "1 conf Prosciutto cotto Beretta","1 conf Prosciutto crudo Citterio","1 conf Feta greca"]
+# Dispensa "da spesa": si segnano c'è / quasi finito / manca, e quando mancano entrano in lista (nel loro reparto)
+PANTRY_SHOP = ["Coca Cola Zero (10 lattine)","Cornetti Tre Marie","Fonzies multipack","Pan bauletto bianco","Sottilette light","Philadelphia light"]
 recurring = [dict(ing(x), id="r-" + str(i), on=True) for i, x in enumerate(RECURRING)]
 
 ids = [r["id"] for r in recipes]
 assert len(ids) == len(set(ids)), "id duplicati"
-pantry = [{"name": p, "state": "ok"} for p in PANTRY]
-seed = {"version": 3, "recipes": recipes, "pantry": pantry, "recurring": recurring}
+pantry = [{"name": p, "state": "ok"} for p in PANTRY] + [{"name": p, "state": "ok", "cat": CATOF[p]} for p in PANTRY_SHOP]
+seed = {"version": 5, "recipes": recipes, "pantry": pantry, "recurring": recurring}
 with open(OUT, "w") as f:
     f.write("// Generato da tools/build_seed.py: ricette di casa, HelloFresh, sorprese da provare, dispensa\n")
     f.write("export default " + json.dumps(seed, ensure_ascii=False, indent=1) + ";\n")

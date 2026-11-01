@@ -175,8 +175,9 @@ function viewSpesa() {
 }
 
 function itemRow(i) {
-  const qty = i.qty != null ? fmtQty(i.qty, i.unit) : i.fromPantry ? (i.pantryState === "poco" ? "quasi finito" : "finito") : "";
-  const sub = i.for.length ? esc(i.for.join(", ")) : i.extra ? "aggiunto a mano" : i.recurring ? "spesa fissa" : "";
+  const qty = i.qty != null ? fmtQty(i.qty, i.unit) : "";
+  const sub = i.for.length ? esc(i.for.join(", ")) : i.extra ? "aggiunto a mano" : i.recurring ? "spesa fissa"
+    : i.fromPantry ? (i.pantryState === "poco" ? "dispensa: quasi finito" : "dispensa: manca") : "";
   return `<div class="item ${i.checked ? "is-checked" : ""}">
     <label class="check"><input type="checkbox" data-a="check" data-key="${esc(i.key)}" ${i.checked ? "checked" : ""}><span class="box"></span>
       <span class="item-text"><span class="item-name">${esc(i.name)}</span>${qty ? `<span class="item-qty">${esc(qty)}</span>` : ""}${sub ? `<small>${sub}</small>` : ""}</span></label>
@@ -258,7 +259,7 @@ function viewPantry() {
       <div class="row">
         <span>${esc(x.name)}</span>
         <span class="row-actions">
-          <button class="chip state-${x.state}" data-a="pantry-cycle" data-name="${esc(x.name)}">${{ ok: "C'è", poco: "Quasi finito", finito: "Finito" }[x.state]}</button>
+          <button class="chip state-${x.state}" data-a="pantry-cycle" data-name="${esc(x.name)}">${{ ok: "C'è", poco: "Quasi finito", finito: "Manca" }[x.state]}</button>
           <button class="icon-btn small" data-a="pantry-del" data-name="${esc(x.name)}" aria-label="Rimuovi">×</button>
         </span>
       </div>`).join("")}</div>`;
@@ -564,7 +565,8 @@ const forms = {
   },
   "pantry-add": (f) => {
     const name = f.get("name").trim(); if (!name) return;
-    if (!state.pantry.some((x) => norm(x.name) === norm(name))) state.pantry.push({ name: name[0].toUpperCase() + name.slice(1), state: "ok" });
+    if (!state.pantry.some((y) => norm(y.name) === norm(name)))
+      { const c = parseIngredientLine(name, knownCats())?.cat; state.pantry.push({ name: name[0].toUpperCase() + name.slice(1), state: "ok", cat: c && c !== "altro" ? c : "dispensa" }); }
     commit(); setTimeout(() => $("[data-form=pantry-add] input")?.focus(), 0);
   },
   "new-recipe": (f) => {

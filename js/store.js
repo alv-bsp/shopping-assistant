@@ -47,6 +47,13 @@ export function migrate(s) {
     }
     const have = new Set(s.pantry.map((x) => x.name.toLowerCase()));
     for (const x of seed.pantry) if (!have.has(x.name.toLowerCase())) s.pantry.push({ ...x });
+    if (v >= 2 && v < 5) {
+      // v5: alcune cose passano dalla spesa fissa alla dispensa (c'è / quasi finito / manca, senza quantità), altre si tolgono
+      const move = new Set(["coca cola zero (10 lattine)", "cornetti tre marie", "fonzies multipack", "pan bauletto bianco", "sottilette light", "philadelphia light"]);
+      const drop = new Set(["kinder pinguì", "mozzarella light"]);
+      s.recurring = (s.recurring || []).filter((x) => !move.has(x.name.toLowerCase()) && !drop.has(x.name.toLowerCase()));
+      for (const x of s.pantry) { delete x.qty; delete x.unit; }
+    }
     if (v < 2) {
       s.recurring ||= structuredClone(seed.recurring);
       if ("surpriseDay" in s.settings) s.settings.specialDay = s.settings.surpriseDay;

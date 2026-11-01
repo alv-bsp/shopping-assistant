@@ -75,7 +75,7 @@ export function buildList(state, wk) {
     if (x.state === "ok" && !p.boughtPantry?.[n]) continue;
     const k = `${n}|`;
     if (items.has(k)) continue;
-    items.set(k, { key: k, name: x.name, unit: "", qty: null, cat: "dispensa", fromPantry: true, pantryState: x.state,
+    items.set(k, { key: k, name: x.name, unit: "", qty: null, cat: x.cat || "dispensa", fromPantry: true, pantryState: x.state,
       for: new Set(pantryNeeded.get(n) ? [...pantryNeeded.get(n).for] : []) });
   }
   for (const x of p.extras || []) {

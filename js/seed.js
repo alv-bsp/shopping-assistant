@@ -1,6 +1,6 @@
 // Generato da tools/build_seed.py: ricette di casa, HelloFresh, sorprese da provare, dispensa
 export default {
- "version": 3,
+ "version": 5,
  "recipes": [
   {
    "id": "tortellini-rana-burro",
@@ -4516,23 +4516,45 @@ export default {
   {
    "name": "Riso",
    "state": "ok"
+  },
+  {
+   "name": "Coca Cola Zero (10 lattine)",
+   "state": "ok",
+   "cat": "bevande"
+  },
+  {
+   "name": "Cornetti Tre Marie",
+   "state": "ok",
+   "cat": "surgelati"
+  },
+  {
+   "name": "Fonzies multipack",
+   "state": "ok",
+   "cat": "snack"
+  },
+  {
+   "name": "Pan bauletto bianco",
+   "state": "ok",
+   "cat": "pane"
+  },
+  {
+   "name": "Sottilette light",
+   "state": "ok",
+   "cat": "frigo"
+  },
+  {
+   "name": "Philadelphia light",
+   "state": "ok",
+   "cat": "frigo"
   }
  ],
  "recurring": [
-  {
-   "name": "Coca Cola Zero (10 lattine)",
-   "qty": 5,
-   "unit": "conf",
-   "cat": "bevande",
-   "id": "r-0",
-   "on": true
-  },
   {
    "name": "Yogurt colato Fage 0%",
    "qty": 3,
    "unit": "pz",
    "cat": "frigo",
-   "id": "r-1",
+   "id": "r-0",
    "on": true
   },
   {
@@ -4540,7 +4562,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "verdura",
-   "id": "r-2",
+   "id": "r-1",
    "on": true
   },
   {
@@ -4548,15 +4570,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "verdura",
-   "id": "r-3",
-   "on": true
-  },
-  {
-   "name": "Cornetti Tre Marie",
-   "qty": 3,
-   "unit": "conf",
-   "cat": "surgelati",
-   "id": "r-4",
+   "id": "r-2",
    "on": true
   },
   {
@@ -4564,23 +4578,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "snack",
-   "id": "r-5",
-   "on": true
-  },
-  {
-   "name": "Kinder Pinguì",
-   "qty": 1,
-   "unit": "conf",
-   "cat": "frigo",
-   "id": "r-6",
-   "on": true
-  },
-  {
-   "name": "Fonzies multipack",
-   "qty": 1,
-   "unit": "conf",
-   "cat": "snack",
-   "id": "r-7",
+   "id": "r-3",
    "on": true
   },
   {
@@ -4588,7 +4586,7 @@ export default {
    "qty": 2,
    "unit": "conf",
    "cat": "carne",
-   "id": "r-8",
+   "id": "r-4",
    "on": true
   },
   {
@@ -4596,7 +4594,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "carne",
-   "id": "r-9",
+   "id": "r-5",
    "on": true
   },
   {
@@ -4604,31 +4602,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "carne",
-   "id": "r-10",
-   "on": true
-  },
-  {
-   "name": "Philadelphia light",
-   "qty": 1,
-   "unit": "conf",
-   "cat": "frigo",
-   "id": "r-11",
-   "on": true
-  },
-  {
-   "name": "Sottilette light",
-   "qty": 1,
-   "unit": "conf",
-   "cat": "frigo",
-   "id": "r-12",
-   "on": true
-  },
-  {
-   "name": "Mozzarella light",
-   "qty": 2,
-   "unit": "pz",
-   "cat": "frigo",
-   "id": "r-13",
+   "id": "r-6",
    "on": true
   },
   {
@@ -4636,15 +4610,7 @@ export default {
    "qty": 1,
    "unit": "conf",
    "cat": "frigo",
-   "id": "r-14",
-   "on": true
-  },
-  {
-   "name": "Pan bauletto bianco",
-   "qty": 1,
-   "unit": "conf",
-   "cat": "pane",
-   "id": "r-15",
+   "id": "r-7",
    "on": true
   }
  ]
