@@ -215,3 +215,11 @@ textarea { resize: vertical; }
 @keyframes pulse { 50% { opacity: .35; } }
 body.logged-out .tabbar, body.logged-out [data-a="settings"] { display: none; }
 .login .form { max-width: 340px; margin: 0 auto; text-align: left; }
+
+/* ---------- v2: pranzi per persona, chip secondarie */
+.slot-meal small { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; font-size: .74rem; margin-top: 1px; }
+.slot-meal { width: 64px; }
+.chips.sub { margin-top: -2px; }
+.chips.sub .chip { font-size: .8rem; padding: 4px 10px; }
+#pick-list h3 { margin-top: 1rem; }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }

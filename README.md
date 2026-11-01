@@ -17,12 +17,18 @@ Per provarla sull'iPhone nella stessa rete: `http://<ip-del-mac>:8080`. L'instal
 
 ## Come funziona
 
-- **Menu**: "Genera" riempie 7 pranzi (carboidrati) e 7 cene (proteine). Regole in `js/planner.js`:
-  lun–ven sforzo massimo 2 con un piccolo bonus ai piatti facili, niente stesso piatto a meno di 10 giorni,
-  niente stessa proteina due cene di fila, 1 cena "sorpresa" il sabato presa dalle ricette *da provare*.
-  Da ogni piatto si può bloccarlo, cambiarlo (↻), chiedere una sorpresa, sceglierlo a mano o segnarlo come fuori casa.
+- **Menu**: "Genera" riempie la settimana. Regole in `js/planner.js`:
+  - **Pranzi per persona**: Alessandro pasta/tortellini, Giulia zuppa pronta o insalata di riso (campo `people`);
+    in settimana solo piatti a sforzo 1, al massimo una novità facile a settimana a testa.
+  - **Cene componibili**: una proteina + un contorno (`role: "proteina" | "contorno"`), con i prodotti della spesa
+    Iperal; ogni tanto un piatto completo facile (tacos, hamburger nel panino). Niente stessa proteina due sere di fila.
+  - **Cena speciale** (sabato): una ricetta vera, HelloFresh o nuova. Una settimana sì e una no è una sorpresa
+    presa dalle ricette *da provare*. **Pizza surgelata** il venerdì. Giorni e frequenze in ⚙︎.
+  - Da ogni slot: blocca, cambia (↻), altra proteina / altro contorno, sorprendimi, scegli a mano, fuori casa.
 - **Voti**: dopo "Fatto" ognuno dà 👍/👎. Un piatto nuovo con un 👍 entra in rotazione, con un 👎 viene scartato.
-- **Spesa**: somma gli ingredienti della settimana, toglie quello che è in dispensa e aggiunge la dispensa finita.
+- **Spesa**: somma gli ingredienti della settimana (scalati per porzioni: i pranzi sono per una persona, `serves`
+  dice per quante porzioni sono le quantità), toglie dispensa e spesa fissa, aggiunge la **spesa fissa**
+  (Dispensa → Spesa fissa: yogurt, Coca Zero, affettati…) e la dispensa finita. Un fisso si salta per una settimana con ×.
   Ogni articolo si può etichettare Esselunga/Iperal (l'etichetta resta per le settimane successive).
   "Condividi" manda la lista come testo, comodo per la spesa online.
 - **Dispensa**: le cose date per scontate (olio, pasta, spezie, salse…). Se una finisce, la segni e va in lista.

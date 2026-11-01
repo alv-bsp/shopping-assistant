@@ -1,6 +1,6 @@
 // Generato da tools/build_seed.py: ricette di casa, HelloFresh, sorprese da provare, dispensa
 export default {
- "version": 1,
+ "version": 3,
  "recipes": [
   {
    "id": "tortellini-rana-burro",
@@ -38,24 +38,39 @@ export default {
    "note": null,
    "history": [],
    "ratings": [],
+   "serves": 1,
+   "people": [
+    "Alessandro"
+   ],
    "variants": [
     {
-     "name": "Prosciutto crudo",
+     "name": "Sfogliagrezza crudo",
      "ingredients": [
       {
-       "name": "Tortellini Rana prosciutto crudo",
-       "qty": 2,
+       "name": "Rana Sfogliagrezza prosciutto crudo",
+       "qty": 1,
        "unit": "conf",
        "cat": "frigo"
       }
      ]
     },
     {
-     "name": "Carne",
+     "name": "Tortellini crudo",
+     "ingredients": [
+      {
+       "name": "Tortellini Rana prosciutto crudo",
+       "qty": 1,
+       "unit": "conf",
+       "cat": "frigo"
+      }
+     ]
+    },
+    {
+     "name": "Tortellini carne",
      "ingredients": [
       {
        "name": "Tortellini Rana carne",
-       "qty": 2,
+       "qty": 1,
        "unit": "conf",
        "cat": "frigo"
       }
@@ -98,24 +113,28 @@ export default {
    "note": null,
    "history": [],
    "ratings": [],
+   "serves": 1,
+   "people": [
+    "Alessandro"
+   ],
    "variants": [
     {
-     "name": "Pesto alla genovese",
+     "name": "Pesto rosso",
      "ingredients": [
       {
-       "name": "Pesto alla genovese Barilla",
-       "qty": 1,
+       "name": "Pesto rosso Barilla",
+       "qty": 0.35,
        "unit": "vasetto",
        "cat": "dispensa"
       }
      ]
     },
     {
-     "name": "Pesto rosso",
+     "name": "Pesto alla genovese",
      "ingredients": [
       {
-       "name": "Pesto rosso Barilla",
-       "qty": 1,
+       "name": "Pesto alla genovese Barilla",
+       "qty": 0.35,
        "unit": "vasetto",
        "cat": "dispensa"
       }
@@ -126,7 +145,7 @@ export default {
      "ingredients": [
       {
        "name": "Pesto ricotta e noci Barilla",
-       "qty": 1,
+       "qty": 0.35,
        "unit": "vasetto",
        "cat": "dispensa"
       }
@@ -137,7 +156,7 @@ export default {
      "ingredients": [
       {
        "name": "Sugo pronto (a scelta)",
-       "qty": 1,
+       "qty": 0.35,
        "unit": "vasetto",
        "cat": "dispensa"
       }
@@ -146,24 +165,15 @@ export default {
    ]
   },
   {
-   "id": "spinacine-contorno",
-   "title": "Spinacine con contorno surgelato",
-   "meal": "cena",
+   "id": "zuppa-pronta",
+   "title": "Zuppa pronta",
+   "meal": "pranzo",
    "effort": 1,
-   "time": 15,
-   "protein": "pollo",
-   "ingredients": [
-    {
-     "name": "Spinacine Aia",
-     "qty": 1,
-     "unit": "conf",
-     "cat": "frigo"
-    }
-   ],
+   "time": 5,
+   "protein": null,
+   "ingredients": [],
    "steps": [
-    "Cuoci le spinacine in padella o forno come da confezione.",
-    "Prepara il contorno surgelato.",
-    "Servi."
+    "Scalda in microonde o in pentolino come da confezione."
    ],
    "status": "rotazione",
    "tags": [
@@ -171,63 +181,901 @@ export default {
    ],
    "source": "casa",
    "url": null,
-   "note": null,
+   "note": "Controlla in etichetta il glutine: alcune zuppe con cereali ne contengono.",
    "history": [],
    "ratings": [],
+   "serves": 1,
+   "people": [
+    "Giulia"
+   ],
    "variants": [
     {
-     "name": "Spinaci",
+     "name": "Minestrone con cavolo",
      "ingredients": [
       {
-       "name": "Spinaci surgelati",
+       "name": "Minestrone fresco con cavolo Iperal",
        "qty": 1,
-       "unit": "conf",
-       "cat": "surgelati"
+       "unit": "pz",
+       "cat": "verdura"
       }
      ]
     },
     {
-     "name": "Piselli",
+     "name": "Crema di zucca e castagne",
      "ingredients": [
       {
-       "name": "Piselli surgelati",
+       "name": "Crema di zucca e castagne",
        "qty": 1,
-       "unit": "conf",
-       "cat": "surgelati"
+       "unit": "pz",
+       "cat": "verdura"
       }
      ]
     },
     {
-     "name": "Patate al forno",
+     "name": "Legumi e cereali",
      "ingredients": [
       {
-       "name": "Patate al forno surgelate",
+       "name": "Zuppa legumi e cereali Iperal",
        "qty": 1,
-       "unit": "conf",
-       "cat": "surgelati"
+       "unit": "pz",
+       "cat": "verdura"
       }
      ]
     },
     {
-     "name": "Verdure grigliate",
+     "name": "Patate, riso e porri",
      "ingredients": [
       {
-       "name": "Verdure grigliate surgelate",
+       "name": "Zuppa patate, riso integrale e porri Iperal",
        "qty": 1,
-       "unit": "conf",
-       "cat": "surgelati"
+       "unit": "pz",
+       "cat": "verdura"
+      }
+     ]
+    },
+    {
+     "name": "Porcini e cavolfiore",
+     "ingredients": [
+      {
+       "name": "Zuppa gourmet porcini e cavolfiore Locomeal",
+       "qty": 1,
+       "unit": "pz",
+       "cat": "verdura"
       }
      ]
     }
    ]
   },
   {
-   "id": "hamburger-casa",
-   "title": "Hamburger",
+   "id": "insalata-di-riso",
+   "title": "Insalata di riso",
+   "meal": "pranzo",
+   "effort": 1,
+   "time": 20,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Riso",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Tonno al naturale Rio Mare",
+     "qty": 1,
+     "unit": "pz",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Mozzarella light",
+     "qty": 0.5,
+     "unit": "pz",
+     "cat": "frigo"
+    },
+    {
+     "name": "Pomodoro ciliegino",
+     "qty": 0.2,
+     "unit": "conf",
+     "cat": "verdura"
+    },
+    {
+     "name": "Olive",
+     "qty": 0.25,
+     "unit": "vasetto",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Cuoci 80 g di riso, scolalo e raffreddalo sotto l'acqua fredda.",
+    "Taglia mozzarella e pomodorini a cubetti.",
+    "Unisci tonno sgocciolato, olive, olio e sale.",
+    "Si conserva in frigo: puoi farne due porzioni e tenerne una per il giorno dopo."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 1,
+   "people": [
+    "Giulia"
+   ]
+  },
+  {
+   "id": "hamburger-tacchino",
+   "title": "Hamburger di tacchino",
    "meal": "cena",
-   "effort": 2,
-   "time": 25,
-   "protein": "manzo",
+   "effort": 1,
+   "time": 12,
+   "protein": "tacchino",
+   "ingredients": [
+    {
+     "name": "Hamburger di tacchino Maggioni",
+     "qty": 2,
+     "unit": "pz",
+     "cat": "carne"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Piastra o padella ben calda con un filo d'olio.",
+    "4-5 minuti per lato, sala alla fine."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "pollo-piastra",
+   "title": "Petto di pollo alla piastra",
+   "meal": "cena",
+   "effort": 1,
+   "time": 10,
+   "protein": "pollo",
+   "ingredients": [
+    {
+     "name": "Petto di pollo a fette Amadori",
+     "qty": 300,
+     "unit": "g",
+     "cat": "carne"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Rosmarino",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Piastra ben calda.",
+    "2-3 minuti per lato, poi sale, rosmarino e un filo d'olio."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "spinacine-contorno",
+   "title": "Cotolette di pollo agli spinaci",
+   "meal": "cena",
+   "effort": 1,
+   "time": 15,
+   "protein": "pollo",
+   "ingredients": [
+    {
+     "name": "Cotolette di pollo agli spinaci",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "carne"
+    }
+   ],
+   "steps": [
+    "In padella o forno come da confezione."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": "Vanno bene anche le Spinacine Aia.",
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "polpette-pollo",
+   "title": "Polpette di pollo",
+   "meal": "cena",
+   "effort": 1,
+   "time": 20,
+   "protein": "pollo",
+   "ingredients": [
+    {
+     "name": "Macinato di pollo",
+     "qty": 300,
+     "unit": "g",
+     "cat": "carne"
+    },
+    {
+     "name": "Uova",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Grana Padano",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Pangrattato",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Impasta macinato, 1 uovo, 2 cucchiai di Grana, 2 di pangrattato e sale.",
+    "Forma le polpette.",
+    "Padella con un filo d'olio, 10-12 minuti girandole spesso."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "wurstel",
+   "title": "Würstel di pollo e tacchino",
+   "meal": "cena",
+   "effort": 1,
+   "time": 8,
+   "protein": "pollo",
+   "ingredients": [
+    {
+     "name": "Würstel di pollo e tacchino",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "carne"
+    }
+   ],
+   "steps": [
+    "Piastra o padella 5-6 minuti, oppure 3 minuti in acqua bollente."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "burger-salmone",
+   "title": "Burger di salmone",
+   "meal": "cena",
+   "effort": 1,
+   "time": 12,
+   "protein": "pesce",
+   "ingredients": [
+    {
+     "name": "Burger di salmone Mittico",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Padella antiaderente con poco olio, dal congelato, 5-6 minuti per lato."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "branzino",
+   "title": "Filetti di branzino al forno",
+   "meal": "cena",
+   "effort": 1,
+   "time": 20,
+   "protein": "pesce",
+   "ingredients": [
+    {
+     "name": "Filetti di branzino Primia",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Origano",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Forno a 200°.",
+    "Filetti in teglia con olio, sale e origano, 15-18 minuti (anche dal congelato)."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "mini-burger-vegetali",
+   "title": "Mini burger vegetali agli spinaci",
+   "meal": "cena",
+   "effort": 1,
+   "time": 10,
+   "protein": "vegetale",
+   "ingredients": [
+    {
+     "name": "Mini burger vegetali con spinaci Primia",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "frigo"
+    }
+   ],
+   "steps": [
+    "Padella con un filo d'olio, 3-4 minuti per lato."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "frittata",
+   "title": "Frittata",
+   "meal": "cena",
+   "effort": 1,
+   "time": 15,
+   "protein": "uova",
+   "ingredients": [
+    {
+     "name": "Uova",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Grana Padano",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Sbatti 5 uova con 2 cucchiai di Grana e sale.",
+    "Padella antiaderente con un filo d'olio, fuoco medio-basso, coperchio, 6-8 minuti.",
+    "Girala con un piatto e altri 2 minuti."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "claude",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "salmone-forno",
+   "title": "Filetti di salmone al forno",
+   "meal": "cena",
+   "effort": 1,
+   "time": 20,
+   "protein": "pesce",
+   "ingredients": [
+    {
+     "name": "Filetti di salmone surgelati",
+     "qty": 2,
+     "unit": "pz",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Forno a 200°.",
+    "Salmone in teglia con olio e sale, 15-20 minuti dal congelato."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "claude",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "proteina",
+   "special": false
+  },
+  {
+   "id": "patatine-forno",
+   "title": "Patatine al forno",
+   "meal": "cena",
+   "effort": 1,
+   "time": 20,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Patatine McCain Forno Express",
+     "qty": 0.5,
+     "unit": "conf",
+     "cat": "surgelati"
+    }
+   ],
+   "steps": [
+    "Forno come da confezione."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "tris-grigliato",
+   "title": "Verdure grigliate",
+   "meal": "cena",
+   "effort": 1,
+   "time": 8,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Tris grigliato Orogel",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    }
+   ],
+   "steps": [
+    "Padella o microonde come da confezione."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "contorno-ortolano",
+   "title": "Contorno ortolano",
+   "meal": "cena",
+   "effort": 1,
+   "time": 15,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Contorno ortolano Frosta",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    }
+   ],
+   "steps": [
+    "In padella come da confezione."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "spinaci",
+   "title": "Spinaci",
+   "meal": "cena",
+   "effort": 1,
+   "time": 10,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Spinaci in cubetti",
+     "qty": 0.3,
+     "unit": "conf",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Padella con un filo d'olio, 8-10 minuti dal congelato, sale alla fine."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "broccoli",
+   "title": "Broccoli",
+   "meal": "cena",
+   "effort": 1,
+   "time": 10,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Broccoli a rosette",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Microonde o vapore 8 minuti, poi olio e sale."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "patate-americane",
+   "title": "Patate americane al forno",
+   "meal": "cena",
+   "effort": 1,
+   "time": 35,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Patate americane",
+     "qty": 500,
+     "unit": "g",
+     "cat": "verdura"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Rosmarino",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Forno a 210°.",
+    "Spicchi con buccia, olio, sale e rosmarino, 30-35 minuti."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "insalata-pomodorini",
+   "title": "Valeriana e pomodorini",
+   "meal": "cena",
+   "effort": 1,
+   "time": 5,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Valeriana",
+     "qty": 1,
+     "unit": "busta",
+     "cat": "verdura"
+    },
+    {
+     "name": "Pomodoro ciliegino",
+     "qty": 0.5,
+     "unit": "conf",
+     "cat": "verdura"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Lava, taglia i pomodorini, condisci."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "piselli",
+   "title": "Piselli",
+   "meal": "cena",
+   "effort": 1,
+   "time": 10,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Piselli surgelati",
+     "qty": 1,
+     "unit": "conf",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "In padella con un filo d'olio, 10 minuti."
+   ],
+   "status": "rotazione",
+   "tags": [],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "contorno",
+   "special": false
+  },
+  {
+   "id": "pizza-surgelata",
+   "title": "Pizza surgelata",
+   "meal": "cena",
+   "effort": 1,
+   "time": 15,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Pizza Italpizza Salamino",
+     "qty": 1,
+     "unit": "pz",
+     "cat": "surgelati"
+    },
+    {
+     "name": "Pizza Italpizza Bufala",
+     "qty": 1,
+     "unit": "pz",
+     "cat": "surgelati"
+    }
+   ],
+   "steps": [
+    "Forno come da confezione."
+   ],
+   "status": "rotazione",
+   "tags": [
+    "pizza"
+   ],
+   "source": "casa",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": false
+  },
+  {
+   "id": "hamburger-casa",
+   "title": "Hamburger nel panino",
+   "meal": "cena",
+   "effort": 1,
+   "time": 20,
+   "protein": "tacchino",
    "ingredients": [
     {
      "name": "Pane per hamburger",
@@ -236,22 +1084,22 @@ export default {
      "cat": "pane"
     },
     {
-     "name": "Insalata mista",
-     "qty": 1,
-     "unit": "busta",
-     "cat": "verdura"
+     "name": "Ketchup",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
     },
     {
-     "name": "Pomodori",
-     "qty": 1,
-     "unit": "pz",
-     "cat": "verdura"
+     "name": "Maionese",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
     }
    ],
    "steps": [
     "Cuoci la carne in padella o piastra ben calda, 3-4 minuti per lato.",
     "Tosta i panini.",
-    "Componi il burger con insalata, pomodoro e il resto della farcitura."
+    "Componi con la farcitura."
    ],
    "status": "rotazione",
    "tags": [
@@ -262,7 +1110,27 @@ export default {
    "note": null,
    "history": [],
    "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": false,
    "variants": [
+    {
+     "name": "Tacchino",
+     "ingredients": [
+      {
+       "name": "Hamburger di tacchino Maggioni",
+       "qty": 2,
+       "unit": "pz",
+       "cat": "carne"
+      },
+      {
+       "name": "Sottilette light",
+       "qty": 2,
+       "unit": "fette",
+       "cat": "frigo"
+      }
+     ]
+    },
     {
      "name": "Manzo semplice",
      "ingredients": [
@@ -273,27 +1141,10 @@ export default {
        "cat": "carne"
       },
       {
-       "name": "Cheddar a fette",
+       "name": "Sottilette light",
        "qty": 2,
        "unit": "fette",
        "cat": "frigo"
-      }
-     ]
-    },
-    {
-     "name": "Pollo",
-     "ingredients": [
-      {
-       "name": "Burger di pollo",
-       "qty": 2,
-       "unit": "pz",
-       "cat": "carne"
-      },
-      {
-       "name": "Maionese",
-       "qty": null,
-       "unit": "",
-       "cat": "dispensa"
       }
      ]
     },
@@ -307,8 +1158,8 @@ export default {
        "cat": "carne"
       },
       {
-       "name": "Cheddar a fette",
-       "qty": 4,
+       "name": "Sottilette light",
+       "qty": 2,
        "unit": "fette",
        "cat": "frigo"
       },
@@ -343,7 +1194,7 @@ export default {
    "protein": "pollo",
    "ingredients": [
     {
-     "name": "Petto di pollo a fette",
+     "name": "Petto di pollo a fette Amadori",
      "qty": 400,
      "unit": "g",
      "cat": "carne"
@@ -373,7 +1224,7 @@ export default {
      "cat": "verdura"
     },
     {
-     "name": "Cheddar a fette",
+     "name": "Sottilette light",
      "qty": 4,
      "unit": "fette",
      "cat": "frigo"
@@ -407,7 +1258,7 @@ export default {
     "Taglia il pollo a striscioline e cuocilo in padella con paprika, sale e olio.",
     "Salsa: cipolla e pomodori a cubetti, sale, olio.",
     "Guacamole: schiaccia l'avocado con lime e sale.",
-    "Scalda le tortillas e componi con pollo, salsa, guacamole e cheddar."
+    "Scalda le tortillas e componi con pollo, salsa, guacamole e sottilette."
    ],
    "status": "rotazione",
    "tags": [
@@ -417,7 +1268,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": false
   },
   {
    "id": "hf-cotoletta-express-al-profumo-di-rosmarin",
@@ -518,7 +1372,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/cotoletta-express-al-profumo-di-rosmarino-68ca9512353e3fbd3184ebbb",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-udon-noodles-express",
@@ -601,7 +1458,11 @@ export default {
    "url": "https://www.hellofresh.it/recipes/udon-noodles-express-con-boccocini-di-lonza-e-cavolo-690e1cae79e2c370e4929a64",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "hf-cotoletta-di-manzo",
@@ -696,7 +1557,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/cotoletta-di-manzo-con-caprese-68ee59489a6dfb54e98267f3",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-cotoletta-di-pollo-alla-palermitana",
@@ -809,7 +1673,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/cotoletta-di-pollo-alla-palermitana-61dc6a11119686181af05540",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-tortiglioni-alla-norcina-salsiccia-e-tar",
@@ -898,7 +1765,11 @@ export default {
    "url": "https://www.hellofresh.it/recipes/tortiglioni-alla-norcina-salsiccia-e-tartufo-6335a5a42e109926014f2835",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "hf-pollo-in-crosta-di-timo-e-rosmarino",
@@ -1023,7 +1894,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/pollo-in-crosta-di-timo-e-rosmarino-6165a873cdeaefbbb5cb7e81",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-scaloppine-di-pollo-ai-funghi-e-mirin",
@@ -1130,7 +2004,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/scaloppine-di-pollo-ai-funghi-e-mirin-6335a5759fa774e2ac1ba2de",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-salmone-in-salsa-hoisin",
@@ -1219,7 +2096,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/salmone-in-salsa-hoisin-669e1e4e180815c79327597b",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-bistecca-di-manzo-e-cardoncelli-prezzemo",
@@ -1326,7 +2206,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/bistecca-di-manzo-e-cardoncelli-prezzemolati-6555f0d153b95b70f997ab42",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-polpette-allascolana",
@@ -1421,7 +2304,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/polpette-allascolana-con-frecando-669e1e59180815c7932759b5",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-tagliata-di-manzo-e-burrata-pugliese",
@@ -1474,9 +2360,9 @@ export default {
      "cat": "verdura"
     },
     {
-     "name": "Pomodorini datterini",
-     "qty": 250,
-     "unit": "g",
+     "name": "Pomodoro ciliegino",
+     "qty": 0.5,
+     "unit": "conf",
      "cat": "verdura"
     },
     {
@@ -1534,7 +2420,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/tagliata-di-manzo-e-burrata-pugliese-641424c0fd78b79c42eb514d",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-pulled-chicken-burger",
@@ -1659,7 +2548,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/pulled-chicken-burger-64edacd5c09936aa866bf53d",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-trota-glassata-allasiatica-e-patatine-ta",
@@ -1778,7 +2670,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/trota-glassata-allasiatica-e-patatine-tartufate-671242ee5c08a4935a910e59",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-hamburger-di-carne",
@@ -1885,7 +2780,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/hamburger-di-carne-con-bacon-e-burrata-62a36c3bb69eb23bebb10d60",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-salmone",
@@ -1974,7 +2872,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/salmone-con-insalata-di-finocchi-e-arance-671784dcfeb5bb81ef3aa100",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "hf-tagliata-di-manzo-e-salsa-zhough",
@@ -2063,7 +2964,10 @@ export default {
    "url": "https://www.hellofresh.it/recipes/tagliata-di-manzo-e-salsa-zhough-66ead288e4af12f9ca26860e",
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-pollo-curry-cocco",
@@ -2149,7 +3053,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-salmone-teriyaki",
@@ -2217,7 +3124,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-saltimbocca",
@@ -2303,7 +3213,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-maiale-senape-miele",
@@ -2382,7 +3295,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-bulgogi-bowl",
@@ -2474,7 +3390,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-pollo-limone-cinese",
@@ -2547,7 +3466,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-orata-forno",
@@ -2564,9 +3486,9 @@ export default {
      "cat": "pesce"
     },
     {
-     "name": "Pomodorini datterini",
-     "qty": 250,
-     "unit": "g",
+     "name": "Pomodoro ciliegino",
+     "qty": 0.5,
+     "unit": "conf",
      "cat": "verdura"
     },
     {
@@ -2615,7 +3537,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-kebab-pollo",
@@ -2712,7 +3637,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-gamberi-zucchine",
@@ -2792,7 +3720,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-pollo-tandoori",
@@ -2877,7 +3808,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-straccetti-rucola",
@@ -2900,9 +3834,9 @@ export default {
      "cat": "verdura"
     },
     {
-     "name": "Pomodorini datterini",
-     "qty": 250,
-     "unit": "g",
+     "name": "Pomodoro ciliegino",
+     "qty": 0.5,
+     "unit": "conf",
      "cat": "verdura"
     },
     {
@@ -2943,7 +3877,10 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "role": "piatto",
+   "special": true
   },
   {
    "id": "new-pasta-tonno-limone",
@@ -2960,15 +3897,15 @@ export default {
      "cat": "dispensa"
     },
     {
-     "name": "Tonno in scatola",
-     "qty": 2,
+     "name": "Tonno al naturale Rio Mare",
+     "qty": 1,
      "unit": "pz",
      "cat": "dispensa"
     },
     {
-     "name": "Pomodorini datterini",
-     "qty": 250,
-     "unit": "g",
+     "name": "Pomodoro ciliegino",
+     "qty": 0.5,
+     "unit": "conf",
      "cat": "verdura"
     },
     {
@@ -3004,7 +3941,11 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "new-gnocchi-sorrentina",
@@ -3071,7 +4012,11 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "new-pasta-salsiccia-funghi",
@@ -3142,7 +4087,11 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "new-carbonara",
@@ -3203,7 +4152,11 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "new-orecchiette-broccoli",
@@ -3267,7 +4220,11 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
   },
   {
    "id": "new-pasta-zucchine-stracchino",
@@ -3328,10 +4285,90 @@ export default {
    "url": null,
    "note": null,
    "history": [],
-   "ratings": []
+   "ratings": [],
+   "serves": 2,
+   "people": [
+    "Alessandro"
+   ]
+  },
+  {
+   "id": "new-insalata-quinoa",
+   "title": "Insalata di quinoa, feta e pomodorini",
+   "meal": "pranzo",
+   "effort": 1,
+   "time": 20,
+   "protein": null,
+   "ingredients": [
+    {
+     "name": "Quinoa",
+     "qty": 60,
+     "unit": "g",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Feta greca",
+     "qty": 0.4,
+     "unit": "conf",
+     "cat": "frigo"
+    },
+    {
+     "name": "Pomodoro ciliegino",
+     "qty": 0.2,
+     "unit": "conf",
+     "cat": "verdura"
+    },
+    {
+     "name": "Cetriolo",
+     "qty": 0.5,
+     "unit": "pz",
+     "cat": "verdura"
+    },
+    {
+     "name": "Olive",
+     "qty": 0.15,
+     "unit": "vasetto",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Olio evo",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    },
+    {
+     "name": "Sale",
+     "qty": null,
+     "unit": "",
+     "cat": "dispensa"
+    }
+   ],
+   "steps": [
+    "Sciacqua la quinoa e cuocila 12-15 minuti in acqua salata, poi raffreddala.",
+    "Unisci feta a cubetti, pomodorini, cetriolo e olive.",
+    "Olio e sale. Senza glutine, e si tiene in frigo per il giorno dopo."
+   ],
+   "status": "da provare",
+   "tags": [],
+   "source": "claude",
+   "url": null,
+   "note": null,
+   "history": [],
+   "ratings": [],
+   "serves": 1,
+   "people": [
+    "Giulia"
+   ]
   }
  ],
  "pantry": [
+  {
+   "name": "Ketchup",
+   "state": "ok"
+  },
+  {
+   "name": "Crema al pistacchio",
+   "state": "ok"
+  },
   {
    "name": "Olio evo",
    "state": "ok"
@@ -3479,6 +4516,136 @@ export default {
   {
    "name": "Riso",
    "state": "ok"
+  }
+ ],
+ "recurring": [
+  {
+   "name": "Coca Cola Zero (10 lattine)",
+   "qty": 5,
+   "unit": "conf",
+   "cat": "bevande",
+   "id": "r-0",
+   "on": true
+  },
+  {
+   "name": "Yogurt colato Fage 0%",
+   "qty": 3,
+   "unit": "pz",
+   "cat": "frigo",
+   "id": "r-1",
+   "on": true
+  },
+  {
+   "name": "Mirtilli",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "verdura",
+   "id": "r-2",
+   "on": true
+  },
+  {
+   "name": "More",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "verdura",
+   "id": "r-3",
+   "on": true
+  },
+  {
+   "name": "Cornetti Tre Marie",
+   "qty": 3,
+   "unit": "conf",
+   "cat": "surgelati",
+   "id": "r-4",
+   "on": true
+  },
+  {
+   "name": "Crackers Schär",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "snack",
+   "id": "r-5",
+   "on": true
+  },
+  {
+   "name": "Kinder Pinguì",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "frigo",
+   "id": "r-6",
+   "on": true
+  },
+  {
+   "name": "Fonzies multipack",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "snack",
+   "id": "r-7",
+   "on": true
+  },
+  {
+   "name": "Fesa di tacchino Amadori",
+   "qty": 2,
+   "unit": "conf",
+   "cat": "carne",
+   "id": "r-8",
+   "on": true
+  },
+  {
+   "name": "Prosciutto cotto Beretta",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "carne",
+   "id": "r-9",
+   "on": true
+  },
+  {
+   "name": "Prosciutto crudo Citterio",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "carne",
+   "id": "r-10",
+   "on": true
+  },
+  {
+   "name": "Philadelphia light",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "frigo",
+   "id": "r-11",
+   "on": true
+  },
+  {
+   "name": "Sottilette light",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "frigo",
+   "id": "r-12",
+   "on": true
+  },
+  {
+   "name": "Mozzarella light",
+   "qty": 2,
+   "unit": "pz",
+   "cat": "frigo",
+   "id": "r-13",
+   "on": true
+  },
+  {
+   "name": "Feta greca",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "frigo",
+   "id": "r-14",
+   "on": true
+  },
+  {
+   "name": "Pan bauletto bianco",
+   "qty": 1,
+   "unit": "conf",
+   "cat": "pane",
+   "id": "r-15",
+   "on": true
   }
  ]
 };

@@ -1,5 +1,5 @@
 // Sincronizzazione con Supabase. Lo stato viene spezzato in righe chiave → JSON nella tabella `kv`:
-//   recipe:<id>, plan:<settimana>, pantry, settings, storeOf, meta
+//   recipe:<id>, plan:<settimana>, pantry, recurring, settings, storeOf, meta
 // Si inviano solo le righe cambiate rispetto all'ultima versione nota del server (lastSynced),
 // quindi le modifiche fatte offline partono da sole quando torna la rete.
 // Conflitti: per riga, vince l'ultima scrittura. Una modifica locale non ancora inviata non viene
@@ -23,13 +23,13 @@ export function stable(v) {
   return JSON.stringify(v ?? null);
 }
 export function toRows(state) {
-  const rows = { meta: { seedVersion: state.seedVersion }, settings: state.settings, pantry: state.pantry, storeOf: state.storeOf };
+  const rows = { meta: { seedVersion: state.seedVersion }, settings: state.settings, pantry: state.pantry, storeOf: state.storeOf, recurring: state.recurring || [] };
   for (const r of state.recipes) rows[`recipe:${r.id}`] = r;
   for (const [wk, p] of Object.entries(state.plans)) rows[`plan:${wk}`] = p;
   return rows;
 }
 export function fromRows(rows) {
-  const s = { seedVersion: rows.meta?.seedVersion || 0, settings: rows.settings, pantry: rows.pantry || [], storeOf: rows.storeOf || {}, recipes: [], plans: {} };
+  const s = { seedVersion: rows.meta?.seedVersion || 0, settings: rows.settings, pantry: rows.pantry || [], storeOf: rows.storeOf || {}, recurring: rows.recurring, recipes: [], plans: {} };
   for (const [k, v] of Object.entries(rows)) {
     if (k.startsWith("recipe:")) s.recipes.push(v);
     else if (k.startsWith("plan:")) s.plans[k.slice(5)] = v;

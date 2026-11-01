@@ -1,16 +1,19 @@
-// Stato dell'app. Per ora vive in localStorage: tutta la persistenza passa da load()/save(),
-// così passare a un backend condiviso (es. Supabase) tocca solo questo file.
+// Stato dell'app. Copia locale in localStorage (load/save); la sincronizzazione con Supabase sta in sync.js.
 import seed from "./seed.js";
 
 const KEY = "food-app-v1";
 
 export const DEFAULT_SETTINGS = {
-  surprisesPerWeek: 1,   // cene "da provare" inserite in automatico
-  surpriseDay: 5,        // 0 = lunedì ... 5 = sabato
+  people: ["Alessandro", "Giulia"],
+  specialDay: 5,         // giorno della cena "speciale" (ricetta vera). 0 = lunedì ... 6 = domenica, -1 = nessuna
+  surpriseEvery: 2,      // la speciale è una ricetta nuova ogni N settimane (1 = sempre, 0 = mai)
+  pizzaDay: 4,           // giorno della pizza surgelata, -1 = nessuno
   maxEffortWeekday: 2,   // sforzo massimo lun-ven
   noRepeatDays: 10,      // giorni prima di riproporre lo stesso piatto
-  people: ["Alessandro", "Giulia"],
+  avoid: ["ceci"],       // ingredienti da evitare: le ricette che li contengono non vengono proposte
 };
+// ricette del seed riscritte in una certa versione (oltre alla riscrittura completa della v2)
+const REFRESHED = { 3: ["new-insalata-quinoa"] };
 
 function fresh() {
   const s = structuredClone(seed);
@@ -18,21 +21,48 @@ function fresh() {
     seedVersion: seed.version,
     recipes: s.recipes,
     pantry: s.pantry,
-    plans: {},        // { [weekKey]: { slots: {"YYYY-MM-DD|pranzo": slot}, checked: {}, extras: [], boughtPantry: {} } }
+    recurring: s.recurring,  // spesa fissa: entra in lista ogni settimana
+    plans: {},        // { [weekKey]: { slots: {"YYYY-MM-DD|cena" | "YYYY-MM-DD|pranzo|Giulia": slot}, checked, extras, boughtPantry, skipRecurring } }
     storeOf: {},      // { [nome ingrediente minuscolo]: "Esselunga" | "Iperal" }
     settings: { ...DEFAULT_SETTINGS },
   };
 }
 
+// campi "strutturali" che arrivano dal seed; stato, storia e voti restano quelli dell'utente
+const SEED_FIELDS = ["title", "meal", "role", "special", "people", "serves", "effort", "time", "protein", "ingredients", "variants", "steps", "tags", "url", "note", "source"];
+
 export function migrate(s) {
+  const v = s.seedVersion || 0;
   s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) };
   s.plans ||= {}; s.storeOf ||= {}; s.pantry ||= [];
-  // nuove ricette aggiunte al seed in versioni successive vengono unite senza toccare quelle esistenti
-  if ((s.seedVersion || 0) < seed.version) {
-    const have = new Set(s.recipes.map((r) => r.id));
-    for (const r of seed.recipes) if (!have.has(r.id)) s.recipes.push(structuredClone(r));
+  if (v < seed.version) {
+    const byId = Object.fromEntries(s.recipes.map((r) => [r.id, r]));
+    for (const sr of seed.recipes) {
+      const r = byId[sr.id];
+      if (!r) { s.recipes.push(structuredClone(sr)); continue; }
+      const refresh = v < 2 || Object.entries(REFRESHED).some(([ver, ids]) => v < Number(ver) && ids.includes(sr.id));
+      if (refresh) { // v2: nuovo modello (cene componibili, pranzi per persona): aggiorna le ricette di base
+        for (const f of SEED_FIELDS) { if (sr[f] === undefined) delete r[f]; else r[f] = structuredClone(sr[f]); }
+      }
+    }
+    const have = new Set(s.pantry.map((x) => x.name.toLowerCase()));
+    for (const x of seed.pantry) if (!have.has(x.name.toLowerCase())) s.pantry.push({ ...x });
+    if (v < 2) {
+      s.recurring ||= structuredClone(seed.recurring);
+      if ("surpriseDay" in s.settings) s.settings.specialDay = s.settings.surpriseDay;
+      delete s.settings.surpriseDay; delete s.settings.surprisesPerWeek;
+      // i vecchi pranzi erano unici: diventano di Alessandro; le vecchie varianti delle spinacine non esistono più
+      for (const p of Object.values(s.plans)) {
+        for (const [k, slot] of Object.entries(p.slots || {})) {
+          const [date, meal, who] = k.split("|");
+          if (meal === "pranzo" && !who) { delete p.slots[k]; p.slots[`${date}|pranzo|${s.settings.people[0]}`] = slot; }
+          if (slot.recipeId === "spinacine-contorno") slot.variant = null;
+        }
+      }
+    }
     s.seedVersion = seed.version;
   }
+  s.recurring ||= [];
   return s;
 }
 
@@ -58,5 +88,5 @@ export function importBackup(json) {
 }
 
 export function plan(state, wk) {
-  return (state.plans[wk] ||= { slots: {}, checked: {}, extras: [], boughtPantry: {} });
+  return (state.plans[wk] ||= { slots: {}, checked: {}, extras: [], boughtPantry: {}, skipRecurring: {} });
 }

@@ -1,17 +1,20 @@
-// Lista della spesa: somma gli ingredienti del menu della settimana, toglie la dispensa,
-// aggiunge le cose di dispensa finite e gli extra a mano.
+// Lista della spesa: somma gli ingredienti del menu della settimana (scalati per porzioni), toglie la dispensa
+// e la spesa fissa, poi aggiunge la spesa fissa della settimana, la dispensa finita e gli extra a mano.
 import { norm } from "./util.js";
 import { plan as getPlan } from "./store.js";
 
 export const CATS = [
   ["verdura", "Frutta e verdura"], ["carne", "Carne e salumi"], ["pesce", "Pesce"],
-  ["frigo", "Latticini e frigo"], ["pane", "Pane"], ["dispensa", "Dispensa"],
-  ["surgelati", "Surgelati"], ["altro", "Altro"],
+  ["frigo", "Latticini e frigo"], ["pane", "Pane"], ["dispensa", "Dispensa"], ["snack", "Snack e colazione"],
+  ["surgelati", "Surgelati"], ["bevande", "Bevande"], ["altro", "Altro"],
 ];
 export const CAT_LABEL = Object.fromEntries(CATS);
 export const STORES = ["Ovunque", "Esselunga", "Iperal"];
 
 const PLURAL = { busta: "buste", vasetto: "vasetti", mazzetto: "mazzetti", lattina: "lattine", fetta: "fette" };
+// unità "a pezzi": in lista si arrotonda per eccesso (mezzo vasetto di pesto = 1 vasetto da comprare)
+const DISCRETE = new Set(["pz", "conf", "busta", "vasetto", "mazzetto", "lattina", "fette", "fetta"]);
+export const roundForList = (q, unit) => (q == null ? q : DISCRETE.has(unit) ? Math.ceil(q - 1e-9) : Math.round(q));
 
 export function fmtQty(qty, unit) {
   if (qty == null) return "";
@@ -29,17 +32,22 @@ export const ingredientsOf = (r, variant) =>
 export function buildList(state, wk) {
   const p = getPlan(state, wk);
   const pantryByName = Object.fromEntries(state.pantry.map((x) => [norm(x.name), x]));
+  const recurringNames = new Set((state.recurring || []).map((x) => norm(x.name)));
+  const diners = state.settings.people.length;
   const recipes = Object.fromEntries(state.recipes.map((r) => [r.id, r]));
   const items = new Map();
   const pantryNeeded = new Map();
 
-  for (const s of Object.values(p.slots)) {
+  for (const [slotKey, s] of Object.entries(p.slots)) {
     if (s.status === "fuori" || !s.recipeId) continue;
-    const r = recipes[s.recipeId];
-    if (!r) continue;
-    const label = r.variants && s.variant != null ? `${r.title} (${r.variants[s.variant]?.name})` : r.title;
-    for (const ing of ingredientsOf(r, s.variant)) {
+    const portions = slotKey.includes("|pranzo|") ? 1 : diners;
+    const parts = [[recipes[s.recipeId], s.variant], [recipes[s.sideId], null]].filter(([r]) => r);
+    for (const [r, variant] of parts) {
+    const factor = portions / (r.serves || 2);
+    const label = r.variants && variant != null ? `${r.title} (${r.variants[variant]?.name})` : r.title;
+    for (const ing of ingredientsOf(r, variant)) {
       const n = norm(ing.name);
+      if (recurringNames.has(n)) continue; // già nella spesa fissa
       if (pantryByName[n]) {
         const e = pantryNeeded.get(n) || { name: pantryByName[n].name, state: pantryByName[n].state, for: new Set() };
         e.for.add(label); pantryNeeded.set(n, e);
@@ -47,9 +55,18 @@ export function buildList(state, wk) {
       }
       const k = `${n}|${ing.unit || ""}`;
       const e = items.get(k) || { key: k, name: ing.name, unit: ing.unit, qty: null, cat: ing.cat || "altro", for: new Set() };
-      if (ing.qty != null) e.qty = (e.qty || 0) + ing.qty;
+      if (ing.qty != null) e.qty = (e.qty || 0) + ing.qty * factor;
       e.for.add(label); items.set(k, e);
     }
+    }
+  }
+  for (const e of items.values()) e.qty = roundForList(e.qty, e.unit);
+
+  // spesa fissa della settimana
+  for (const x of state.recurring || []) {
+    if (!x.on || p.skipRecurring?.[x.id]) continue;
+    const k = `rec|${x.id}`;
+    items.set(k, { key: k, name: x.name, unit: x.unit, qty: x.qty, cat: x.cat || "altro", recurring: true, id: x.id, for: new Set() });
   }
 
   // dispensa finita / quasi finita (o appena ricomprata in questa settimana)
