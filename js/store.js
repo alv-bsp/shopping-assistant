@@ -94,6 +94,16 @@ export function importBackup(json) {
   return migrate(s);
 }
 
+/**
+ * Chi è a casa in un giorno. Il piano della settimana ha `people` (chi c'è di solito quella settimana)
+ * e `dayPeople` (eccezioni per singolo giorno). Senza indicazioni: tutti.
+ */
+export function presentOn(state, wk, date) {
+  const p = state.plans[wk], all = state.settings.people;
+  const who = p?.dayPeople?.[date] ?? p?.people ?? all;
+  return all.filter((x) => who.includes(x));
+}
+
 export function plan(state, wk) {
   return (state.plans[wk] ||= { slots: {}, checked: {}, extras: [], boughtPantry: {}, skipRecurring: {} });
 }

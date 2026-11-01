@@ -397,3 +397,20 @@ body.logged-out .tabbar, body.logged-out .topbar { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0s !important; }
 }
+
+/* ---------- chi è a casa */
+.who-row { display: flex; gap: 8px; justify-content: center; margin: 0 0 18px; flex-wrap: wrap; }
+.who-row.compact { justify-content: flex-start; margin: 0; }
+.who-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: transparent; color: var(--ink-3); border-radius: 999px; padding: 5px 11px 5px 5px; font-size: .84rem; white-space: nowrap; font-weight: 600; transition: background .2s, color .2s, border-color .2s; }
+.who-chip .av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: .74rem; font-weight: 750; background: var(--surface-2); color: var(--ink-3); transition: background .2s, color .2s; }
+.who-chip:not(.on) .nm { text-decoration: line-through; text-decoration-color: var(--ink-3); }
+.who-chip.on { background: var(--surface); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+.who-chip.on .av { background: var(--accent); color: var(--accent-ink); }
+.who-chip.out { padding-left: 11px; margin-left: auto; text-decoration: none; }
+.who-chip.out .i { color: var(--ink-3); }
+.who-chip.out.on { background: var(--warn-soft); color: var(--warn); border-color: transparent; box-shadow: none; }
+.who-chip.out.on .i { color: var(--warn); }
+.presence { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; margin-top: 14px; }
+.week-who { display: grid; gap: 8px; margin: -2px 2px 14px; font-size: .8rem; font-weight: 650; color: var(--ink-2); }
+.lunches.one { grid-template-columns: 1fr; }
+.lunches.one .lunch { min-height: 0; }

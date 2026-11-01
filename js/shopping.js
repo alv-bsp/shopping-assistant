@@ -1,7 +1,7 @@
 // Lista della spesa: somma gli ingredienti del menu della settimana (scalati per porzioni), toglie la dispensa
 // e la spesa fissa, poi aggiunge la spesa fissa della settimana, la dispensa finita e gli extra a mano.
 import { norm } from "./util.js";
-import { plan as getPlan } from "./store.js";
+import { plan as getPlan, presentOn } from "./store.js";
 
 export const CATS = [
   ["verdura", "Frutta e verdura"], ["carne", "Carne e salumi"], ["pesce", "Pesce"],
@@ -33,14 +33,17 @@ export function buildList(state, wk) {
   const p = getPlan(state, wk);
   const pantryByName = Object.fromEntries(state.pantry.map((x) => [norm(x.name), x]));
   const recurringNames = new Set((state.recurring || []).map((x) => norm(x.name)));
-  const diners = state.settings.people.length;
+  const home = (d) => presentOn(state, wk, d);
   const recipes = Object.fromEntries(state.recipes.map((r) => [r.id, r]));
   const items = new Map();
   const pantryNeeded = new Map();
 
   for (const [slotKey, s] of Object.entries(p.slots)) {
     if (s.status === "fuori" || !s.recipeId) continue;
-    const portions = slotKey.includes("|pranzo|") ? 1 : diners;
+    // pranzo: una porzione per chi c'è quel giorno; cena: tante porzioni quante persone a casa
+    const [date, meal, who] = slotKey.split("|");
+    const portions = meal === "pranzo" ? (home(date).includes(who) ? 1 : 0) : home(date).length;
+    if (!portions) continue;
     const parts = [[recipes[s.recipeId], s.variant], [recipes[s.sideId], null]].filter(([r]) => r);
     for (const [r, variant] of parts) {
     const factor = portions / (r.serves || 2);

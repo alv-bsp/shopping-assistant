@@ -1,7 +1,7 @@
 // UI: rendering con template string + event delegation (data-a = azione al click).
-import { load, save, reset, importBackup, plan, migrate } from "./store.js";
+import { load, save, reset, importBackup, plan, migrate, presentOn } from "./store.js";
 import * as sync from "./sync.js";
-import { generateWeek, pickForSlot, key, splitKey, rate, markDone, dayRows, swapPart, pickPart, hasAvoided } from "./planner.js";
+import { generateWeek, pickForSlot, key, splitKey, rate, markDone, swapPart, pickPart, hasAvoided, syncPresence } from "./planner.js";
 import { buildList, groupBy, asText, fmtQty, CAT_LABEL, ingredientsOf, parseIngredientLine } from "./shopping.js";
 import { weekKey, weekDays, addDays, today, fmtWeek, fmtDay, dayIndex, parseIso, DAY_SHORT, DAY_LONG, norm, uid, slug, esc } from "./util.js";
 import { icon } from "./icons.js";
@@ -168,31 +168,56 @@ function viewMenu() {
 
   if (!Object.keys(p.slots).length) {
     return nav + `<div class="empty-card">
-      <span class="dish-ico lg" data-tint="tomato">${icon("chef-hat", 28)}</span>
+      <span class="dish-ico lg" data-tint="olive">${icon("chef-hat", 28)}</span>
       <h3>La settimana è ancora da scrivere</h3>
-      <p>Un pranzo a testa, cene con proteina e contorno, una cena speciale il sabato${state.settings.pizzaDay >= 0 ? " e la pizza" : ""}. Poi cambi quello che non ti va.</p>
-      <button class="btn primary block" data-a="generate">${icon("chef-hat", 18)} Prepara il menu</button></div>`;
+      <p>Chi è a casa questa settimana? La spesa si calcola per chi c'è. I singoli giorni li cambi dopo.</p>
+      ${weekPresence(p)}
+      <button class="btn primary block" data-a="generate">Prepara il menu</button></div>`;
   }
 
-  const lunches = state.settings.people.map((who) => lunchCard(p, sel, who)).join("");
+  const home = presentOn(state, ui.wk, sel);
+  const lunches = home.map((who) => lunchCard(p, sel, who)).join("");
   const rows = days.map((d) => weekRow(p, d, d === sel)).join("");
-  return nav + heroCard(p, sel) + `
-    <div class="section-head"><h2>Pranzi</h2></div>
-    <div class="lunches">${lunches}</div>
+  return nav + dayPresence(p, sel, home) + heroCard(p, sel, home) + `
+    ${home.length ? `<div class="section-head"><h2>${home.length > 1 ? "Pranzi" : "Pranzo"}</h2></div>
+    <div class="lunches ${home.length === 1 ? "one" : ""}">${lunches}</div>` : ""}
     <div class="section-head"><h2>La settimana</h2><button class="link" data-a="generate">Rigenera</button></div>
+    <div class="week-who"><span>A casa questa settimana</span>${weekPresence(p, true)}</div>
     <div class="week-list">${rows}</div>
     <p class="hint center">Rigenera cambia solo i piatti non bloccati e non ancora fatti.</p>`;
 }
 
-function heroCard(p, d) {
+/** Chi c'è questa settimana (prima di generare, e sopra la lista della settimana). */
+function weekPresence(p, compact = false) {
+  const cur = p.people || state.settings.people;
+  return `<div class="who-row ${compact ? "compact" : ""}">${state.settings.people.map((x) =>
+    `<button class="who-chip ${cur.includes(x) ? "on" : ""}" data-a="week-person" data-p="${esc(x)}" aria-pressed="${cur.includes(x)}">
+      <span class="av">${esc(x.slice(0, 1))}</span><span class="nm">${esc(x)}</span></button>`).join("")}</div>`;
+}
+/** Chi c'è nel giorno selezionato, più "cena fuori". */
+function dayPresence(p, d, home) {
+  const s = p.slots[key(d, "cena")], out = s?.status === "fuori";
+  return `<div class="presence">
+    ${state.settings.people.map((x) => `<button class="who-chip ${home.includes(x) ? "on" : ""}" data-a="day-person" data-d="${d}" data-p="${esc(x)}" aria-pressed="${home.includes(x)}" aria-label="${esc(x)} ${home.includes(x) ? "a casa" : "non c'è"}">
+      <span class="av">${esc(x.slice(0, 1))}</span><span class="nm">${esc(x)}</span></button>`).join("")}
+    ${home.length ? `<button class="who-chip out ${out ? "on" : ""}" data-a="dinner-out" data-d="${d}" aria-pressed="${out}">${icon("utensils-crossed", 15)} Cena fuori</button>` : ""}
+  </div>`;
+}
+
+function heroCard(p, d, home) {
   const k = key(d, "cena"), s = p.slots[k], isToday = d === today();
   const eyebrowWord = isToday ? "Stasera" : "Cena";
+  if (!home.length) {
+    return `<section class="hero is-out ${ui.dayFx ? "fade-in" : ""}"><div class="eyebrow">${DAY_LONG[dayIndex(d)]}</div>
+      <h3>Nessuno a casa</h3><p class="hint" style="margin:6px 0 0">Niente pasti e niente spesa per questo giorno. Tocca un nome qui sopra se cambia qualcosa.</p></section>`;
+  }
   if (!s || s.status === "fuori") {
     return `<section class="hero ${s ? "is-out" : ""} ${ui.dayFx ? "fade-in" : ""}">
       <div class="eyebrow">${eyebrowWord}</div>
-      <h3>${s ? "Fuori casa" : "Da decidere"}</h3>
+      <h3>${s ? "Cena fuori" : "Da decidere"}</h3>
+      ${s ? `<p class="hint" style="margin:6px 0 0">Niente spesa per questa cena.</p>` : ""}
       <div class="hero-actions">
-        ${s ? `<button class="btn soft" data-a="clear" data-k="${esc(k)}">${icon("rotate-ccw", 17)} Si cena a casa</button>`
+        ${s ? `<button class="btn soft" data-a="dinner-out" data-d="${d}">${icon("rotate-ccw", 17)} Si cena a casa</button>`
           : `<button class="btn primary" data-a="reroll" data-k="${esc(k)}">${icon("refresh-cw", 17)} Proponimi qualcosa</button>
              <button class="btn soft" data-a="pick" data-k="${esc(k)}">${icon("book-open", 17)} Scegli</button>`}
       </div></section>`;
@@ -242,12 +267,14 @@ function lunchCard(p, d, who) {
 }
 
 function weekRow(p, d, isSel) {
+  const home = presentOn(state, ui.wk, d), all = state.settings.people;
   const c = p.slots[key(d, "cena")], ci = c && c.status !== "fuori" ? slotInfo(c) : null;
-  const dinner = ci ? ci.full : c?.status === "fuori" ? "Fuori casa" : "Da decidere";
-  const lunches = state.settings.people.map((who) => {
+  const dinner = !home.length ? "Nessuno a casa" : ci ? ci.full : c?.status === "fuori" ? "Cena fuori" : "Da decidere";
+  const lunchBits = home.map((who) => {
     const s = p.slots[key(d, "pranzo", who)], li = s && s.status !== "fuori" ? slotInfo(s) : null;
     return `${who.slice(0, 1)}. ${li ? li.title : s ? "fuori" : "—"}`;
-  }).join(" · ");
+  });
+  const lunches = (home.length && home.length < all.length ? `Solo ${home.join(" e ")} · ` : "") + lunchBits.join(" · ");
   const st = c?.status === "done" ? `<span class="ok">${icon("circle-check", 18)}</span>` : c?.locked ? icon("lock", 15) : "";
   return `<button class="wrow ${isSel ? "is-sel" : ""}" data-a="day" data-d="${d}">
     <span class="wd"><b>${parseIso(d).getDate()}</b><small>${DAY_SHORT[dayIndex(d)]}</small></span>
@@ -394,7 +421,8 @@ function sheetSlot(k) {
         ${action("reroll", k, "refresh-cw", "Proponimi qualcosa")}
         ${action("surprise", k, "dices", "Sorprendimi", "una ricetta nuova")}
         ${action("pick", k, "book-open", "Scegli dal catalogo")}
-        ${s ? action("clear", k, "rotate-ccw", meal === "cena" ? "Si cena a casa" : "Si pranza a casa") : action("fuori", k, "utensils-crossed", "Fuori casa o salta")}
+        ${s ? (meal === "cena" ? `<button data-a="dinner-out" data-d="${date}">${icon("rotate-ccw", 19)}<span>Si cena a casa</span></button>` : action("clear", k, "rotate-ccw", "Si pranza a casa"))
+          : action("fuori", k, "utensils-crossed", meal === "cena" ? "Cena fuori" : "Pranzo fuori o salta")}
       </div>`);
   }
   const info = slotInfo(s); if (!info) return;
@@ -417,7 +445,7 @@ function sheetSlot(k) {
       ${action("surprise", k, "dices", "Sorprendimi", "una ricetta nuova")}
       ${action("pick", k, "book-open", "Scegli dal catalogo")}
       ${action("lock", k, s.locked ? "lock-open" : "lock", s.locked ? "Sblocca" : "Blocca", s.locked ? "" : "Rigenera non lo cambia")}
-      ${action("fuori", k, "utensils-crossed", "Fuori casa o salta")}
+      ${action("fuori", k, "utensils-crossed", meal === "cena" ? "Cena fuori" : "Pranzo fuori o salta")}
       ${action("clear", k, "trash-2", "Svuota", "", "danger")}
     </div>`);
 }
@@ -564,6 +592,31 @@ function afterSlot(k, flash = false) {
 const actions = {
   tab: (d) => { ui.tab = d.tabTo || d.tab; render(); window.scrollTo(0, 0); },
   wk: (d) => { const n = Number(d.d); ui.day = addDays(selDay(), n); ui.wk = addDays(ui.wk, n); render(); },
+  "week-person": (d) => {
+    const p = plan(state, ui.wk), cur = p.people || state.settings.people;
+    const next = cur.includes(d.p) ? cur.filter((x) => x !== d.p) : [...cur, d.p];
+    if (!next.length) { toast("Almeno una persona a casa: per i giorni vuoti usa i singoli giorni"); return; }
+    p.people = state.settings.people.filter((x) => next.includes(x));
+    if (p.people.length === state.settings.people.length) delete p.people;
+    syncPresence(state, ui.wk); commit();
+  },
+  "day-person": (d) => {
+    const p = plan(state, ui.wk), cur = presentOn(state, ui.wk, d.d);
+    const next = state.settings.people.filter((x) => (x === d.p ? !cur.includes(x) : cur.includes(x)));
+    const weekDefault = p.people || state.settings.people;
+    p.dayPeople ||= {};
+    if (next.length === weekDefault.length && next.every((x) => weekDefault.includes(x))) delete p.dayPeople[d.d];
+    else p.dayPeople[d.d] = next;
+    if (!Object.keys(p.dayPeople).length) delete p.dayPeople;
+    syncPresence(state, ui.wk, [d.d]); commit();
+  },
+  "dinner-out": (d) => {
+    const p = plan(state, ui.wk), k = key(d.d, "cena"), s = p.slots[k];
+    // si torna al piatto che c'era prima di "cena fuori"; se non c'era, se ne sceglie uno
+    if (s?.status === "fuori") { delete p.slots[k]; const n = s.prev || pickForSlot(state, ui.wk, k); if (n) p.slots[k] = n; ui.flash = k; }
+    else setSlot(k, { status: "fuori", locked: true, ...(s ? { prev: s } : {}) });
+    commit(); closeSheet();
+  },
   day: (d) => { ui.day = d.d; ui.dayFx = true; render(); window.scrollTo({ top: 0, behavior: "smooth" }); },
   generate: () => {
     const had = Object.keys(plan(state, ui.wk).slots).length;
@@ -585,8 +638,8 @@ const actions = {
     if (changed === "scartata") toast("Scartata: non ve la propongo più");
   },
   variant: (d) => { plan(state, ui.wk).slots[d.k].variant = Number(d.i); afterSlot(d.k, true); },
-  fuori: (d) => { setSlot(d.k, { status: "fuori", locked: true }); commit(); closeSheet(); },
-  clear: (d) => { delete plan(state, ui.wk).slots[d.k]; commit(); closeSheet(); },
+  fuori: (d) => { const cur = plan(state, ui.wk).slots[d.k]; setSlot(d.k, { status: "fuori", locked: true, ...(cur && cur.status !== "fuori" ? { prev: cur } : {}) }); commit(); closeSheet(); },
+  clear: (d) => { const p = plan(state, ui.wk), cur = p.slots[d.k]; if (cur?.status === "fuori" && cur.prev) p.slots[d.k] = cur.prev; else delete p.slots[d.k]; commit(); closeSheet(); },
   pick: (d) => sheetPick(d.k),
   "pick-one": (d) => {
     const r = R(d.id), k = ui.pickKey, cur = plan(state, ui.wk).slots[k];

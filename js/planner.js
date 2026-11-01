@@ -6,7 +6,7 @@
 // - pizza surgelata nel giorno scelto
 // - lun-ven sforzo massimo configurabile; niente ripetizioni ravvicinate; niente stessa proteina due sere di fila
 import { weekDays, addDays, daysBetween, isWeekend, dayIndex } from "./util.js";
-import { plan as getPlan } from "./store.js";
+import { plan as getPlan, presentOn } from "./store.js";
 
 /** Chiave di uno slot: "data|cena" oppure "data|pranzo|Persona". */
 export const key = (date, meal, person) => (meal === "pranzo" ? `${date}|pranzo|${person}` : `${date}|${meal}`);
@@ -163,7 +163,9 @@ export function pickForSlot(state, wk, k, { mode = "auto", exclude = [], rng = M
   if (meal === "pranzo") return pickLunch(state, wk, date, person, { pool: mode === "surprise" ? "surprise" : "rotazione", exclude, rng, slots });
   const st = state.settings, di = dayIndex(date);
   if (mode === "surprise") return pickSpecial(state, wk, date, { surprise: true, exclude, rng, slots });
-  if (mode === "auto" && di === st.specialDay) return pickSpecial(state, wk, date, { surprise: isSurpriseWeek(wk, st), exclude, rng, slots });
+  // la sorpresa è per tutti e due: se qualcuno non c'è, la speciale è un classico
+  const everyone = presentOn(state, wk, date).length === st.people.length;
+  if (mode === "auto" && di === st.specialDay) return pickSpecial(state, wk, date, { surprise: everyone && isSurpriseWeek(wk, st), exclude, rng, slots });
   if (mode === "auto" && di === st.pizzaDay) return pickPizza(state, exclude) || pickEveryday(state, wk, date, { exclude, rng, slots });
   return pickEveryday(state, wk, date, { exclude, rng, slots });
 }
@@ -196,15 +198,38 @@ export function generateWeek(state, wk, rng = Math.random) {
   const days = weekDays(wk), st = state.settings;
   const order = [];
   // prima speciale e pizza (giorni fissi), poi le altre cene, poi i pranzi
-  for (const d of days) if (dayIndex(d) === st.specialDay || dayIndex(d) === st.pizzaDay) order.push(key(d, "cena"));
-  for (const d of days) order.push(key(d, "cena"));
-  for (const person of st.people) for (const d of days) order.push(key(d, "pranzo", person));
+  const home = (d) => presentOn(state, wk, d);
+  for (const d of days) if (home(d).length && (dayIndex(d) === st.specialDay || dayIndex(d) === st.pizzaDay)) order.push(key(d, "cena"));
+  for (const d of days) if (home(d).length) order.push(key(d, "cena"));
+  for (const person of st.people) for (const d of days) if (home(d).includes(person)) order.push(key(d, "pranzo", person));
   for (const k of order) {
     if (slots[k]) continue;
     const s = pickForSlot(state, wk, k, { rng, slots });
     if (s) slots[k] = s;
   }
   p.slots = slots;
+  return p;
+}
+
+/**
+ * Allinea i pasti di un giorno (o di tutta la settimana) a chi è a casa:
+ * toglie i pranzi di chi non c'è e la cena se non c'è nessuno, e se la settimana è già pianificata
+ * aggiunge i pasti mancanti per chi è tornato. I pasti già fatti non si toccano.
+ */
+export function syncPresence(state, wk, dates = weekDays(wk), rng = Math.random) {
+  const p = getPlan(state, wk);
+  const planned = Object.keys(p.slots).length > 0;
+  for (const d of dates) {
+    const home = presentOn(state, wk, d);
+    for (const person of state.settings.people) {
+      const k = key(d, "pranzo", person), s = p.slots[k];
+      if (!home.includes(person)) { if (s && s.status !== "done") delete p.slots[k]; }
+      else if (planned && !s) { const n = pickForSlot(state, wk, k, { rng }); if (n) p.slots[k] = n; }
+    }
+    const k = key(d, "cena"), s = p.slots[k];
+    if (!home.length) { if (s && s.status !== "done") delete p.slots[k]; }
+    else if (planned && !s) { const n = pickForSlot(state, wk, k, { rng }); if (n) p.slots[k] = n; }
+  }
   return p;
 }
 
