@@ -3,6 +3,9 @@
 PWA per il menu settimanale di casa (Alessandro e Giulia) e la lista della spesa che ne deriva.
 Vanilla JS, nessuna build, nessuna dipendenza.
 
+Stile "da cucina": carta crema, titoli in Fraunces (font incluso in `fonts/`, licenza OFL), pomodoro come unico
+accento forte, icone Lucide inline (`js/icons.js`, licenza ISC). Tema chiaro e scuro automatici.
+
 ## Avvio in locale
 
 ```bash
