@@ -2,7 +2,7 @@
 import { app, ok, done } from "./helpers.mjs";
 const store = await app("js/store.js"), pl = await app("js/planner.js"), sh = await app("js/shopping.js");
 const { weekDays } = await app("js/util.js");
-const wk = "2026-11-09", days = weekDays(wk);
+const wk = "2030-01-07", days = weekDays(wk);
 let s = store.load(null); const p = store.plan(s, wk); p.people = ["Alessandro"]; pl.generateWeek(s, wk);
 const keys = Object.keys(p.slots);
 ok(!keys.some((k) => k.endsWith("|Giulia")) && keys.filter((k) => k.endsWith("|Alessandro")).length === 7 && keys.filter((k) => k.endsWith("|cena")).length === 7, "solo Alessandro: i suoi 7 pranzi e 7 cene");

@@ -1,6 +1,6 @@
 // Lista della spesa: somma gli ingredienti del menu della settimana (scalati per porzioni), toglie la dispensa
 // e la spesa fissa, poi aggiunge la spesa fissa della settimana, la dispensa finita e gli extra a mano.
-import { norm } from "./util.js";
+import { norm, today } from "./util.js";
 import { plan as getPlan, presentOn } from "./store.js";
 
 export const CATS = [
@@ -29,7 +29,14 @@ export function fmtQty(qty, unit) {
 export const ingredientsOf = (r, variant) =>
   [...(r.ingredients || []), ...((variant != null && r.variants?.[variant]?.ingredients) || [])];
 
-export function buildList(state, wk) {
+/** Una spunta vale finché non serve più di quanto preso: se dopo un cambio ne serve di più, la voce torna da prendere. */
+const isChecked = (v, qty) => v === true || (typeof v === "number" && (qty == null || qty <= v + 1e-9));
+
+/**
+ * Lista della spesa di una settimana. Conta solo i pasti da oggi (now) in poi, non ancora fatti, non fuori,
+ * per chi è a casa: i pasti già passati sono stati comprati e mangiati.
+ */
+export function buildList(state, wk, now = today()) {
   const p = getPlan(state, wk);
   const pantryByName = Object.fromEntries(state.pantry.map((x) => [norm(x.name), x]));
   const recurringNames = new Set((state.recurring || []).map((x) => norm(x.name)));
@@ -39,9 +46,10 @@ export function buildList(state, wk) {
   const pantryNeeded = new Map();
 
   for (const [slotKey, s] of Object.entries(p.slots)) {
-    if (s.status === "fuori" || !s.recipeId) continue;
+    if (s.status === "fuori" || s.status === "done" || !s.recipeId) continue;
     // pranzo: una porzione per chi c'è quel giorno; cena: tante porzioni quante persone a casa
     const [date, meal, who] = slotKey.split("|");
+    if (date < now) continue;
     const portions = meal === "pranzo" ? (home(date).includes(who) ? 1 : 0) : home(date).length;
     if (!portions) continue;
     const parts = [[recipes[s.recipeId], s.variant], [recipes[s.sideId], null]].filter(([r]) => r);
@@ -87,7 +95,7 @@ export function buildList(state, wk) {
   }
 
   const list = [...items.values()].map((e) => ({
-    ...e, for: [...e.for], store: state.storeOf[norm(e.name)] || "Ovunque", checked: !!p.checked?.[e.key],
+    ...e, for: [...e.for], store: state.storeOf[norm(e.name)] || "Ovunque", checked: isChecked(p.checked?.[e.key], e.qty),
   }));
   const order = Object.fromEntries(CATS.map(([c], i) => [c, i]));
   list.sort((a, b) => (order[a.cat] ?? 99) - (order[b.cat] ?? 99) || a.name.localeCompare(b.name, "it"));

@@ -22,5 +22,5 @@ P
 python3 "$T/imp/tools/build_seed.py" "$T/imp/tools/recipes_hellofresh.json" "$T/imp/js/seed.js" >/dev/null
 node_modules/.bin/esbuild ../js/app.js --bundle --format=iife --outfile="$T/bundle.js" --log-level=warning --external:https://*
 status=0
-for t in plan presence migrate import sync ui; do node "$t.test.mjs" || status=1; done
+for t in plan presence shopping migrate import sync ui; do node "$t.test.mjs" || status=1; done
 exit $status

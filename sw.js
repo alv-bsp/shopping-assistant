@@ -1,6 +1,6 @@
 // Service worker: app shell in cache, così l'app si apre anche offline (es. al supermercato senza campo).
 // Cambia VERSION a ogni modifica dei file per forzare l'aggiornamento.
-const VERSION = "v14";
+const VERSION = "v15";
 const SHELL = ["./", "index.html", "css/app.css", "js/app.js", "js/store.js", "js/planner.js", "js/shopping.js",
   "js/util.js", "js/seed.js", "js/sync.js", "js/config.js", "js/icons.js", "fonts/jakarta.woff2", "manifest.webmanifest", "icons/icon-192.png", "icons/apple-touch-icon.png"];
 

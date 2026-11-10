@@ -5,7 +5,7 @@ const { generateWeek, key } = await app("js/planner.js");
 const { weekDays, addDays } = await app("js/util.js");
 let piatti = 0, viol = [], protRep = 0; const n = 300;
 for (let i = 0; i < n; i++) {
-  const s = load(null), w = addDays("2026-11-02", 7 * (i % 10)), p = generateWeek(s, w);
+  const s = load(null), w = addDays("2030-01-07", 7 * (i % 10)), p = generateWeek(s, w);
   const R = (id) => s.recipes.find((x) => x.id === id);
   const cene = weekDays(w).map((d) => p.slots[key(d, "cena")]);
   cene.forEach((c, j) => {

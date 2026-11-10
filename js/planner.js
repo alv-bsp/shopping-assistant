@@ -5,7 +5,7 @@
 // - una cena speciale a settimana (ricetta vera: HelloFresh o nuova); ogni N settimane è una sorpresa da provare
 // - pizza surgelata nel giorno scelto
 // - lun-ven sforzo massimo configurabile; niente ripetizioni ravvicinate; niente stessa proteina due sere di fila
-import { weekDays, addDays, daysBetween, isWeekend, dayIndex } from "./util.js";
+import { weekDays, addDays, daysBetween, isWeekend, dayIndex, today } from "./util.js";
 import { plan as getPlan, presentOn } from "./store.js";
 
 /** Chiave di uno slot: "data|cena" oppure "data|pranzo|Persona". */
@@ -191,11 +191,14 @@ export function pickPart(state, wk, k, { keepProtein = null, keepSide = null, rn
   return pickEveryday(state, wk, splitKey(k).date, { exclude: [], rng, slots, keepProtein, keepSide });
 }
 
-/** (Ri)genera la settimana. Gli slot bloccati, fatti o "fuori casa" restano com'erano. */
-export function generateWeek(state, wk, rng = Math.random) {
+/**
+ * (Ri)genera la settimana. Restano com'erano gli slot bloccati, fatti, "fuori casa" e quelli dei giorni già passati
+ * (now = oggi): rigenerare il mercoledì non deve cambiare cosa si è mangiato lunedì.
+ */
+export function generateWeek(state, wk, rng = Math.random, now = today()) {
   const p = getPlan(state, wk);
-  const slots = Object.fromEntries(Object.entries(p.slots).filter(([, s]) => s.locked || s.status === "done" || s.status === "fuori"));
-  const days = weekDays(wk), st = state.settings;
+  const slots = Object.fromEntries(Object.entries(p.slots).filter(([k, s]) => s.locked || s.status === "done" || s.status === "fuori" || splitKey(k).date < now));
+  const days = weekDays(wk).filter((d) => d >= now), st = state.settings;
   const order = [];
   // prima speciale e pizza (giorni fissi), poi le altre cene, poi i pranzi
   const home = (d) => presentOn(state, wk, d);
@@ -216,10 +219,11 @@ export function generateWeek(state, wk, rng = Math.random) {
  * toglie i pranzi di chi non c'è e la cena se non c'è nessuno, e se la settimana è già pianificata
  * aggiunge i pasti mancanti per chi è tornato. I pasti già fatti non si toccano.
  */
-export function syncPresence(state, wk, dates = weekDays(wk), rng = Math.random) {
+export function syncPresence(state, wk, dates = weekDays(wk), rng = Math.random, now = today()) {
   const p = getPlan(state, wk);
   const planned = Object.keys(p.slots).length > 0;
   for (const d of dates) {
+    if (d < now) continue; // i giorni passati non si toccano
     const home = presentOn(state, wk, d);
     for (const person of state.settings.people) {
       const k = key(d, "pranzo", person), s = p.slots[k];

@@ -103,7 +103,8 @@ function renderTop() {
     eyebrow = d === today() ? `${DAY_LONG[dayIndex(d)]} ${fmtLong(d)}` : fmtLong(d);
     title = d === today() ? "Oggi" : DAY_LONG[dayIndex(d)];
   } else if (ui.tab === "spesa") {
-    eyebrow = `Settimana ${fmtWeek(ui.wk)}`; title = "Spesa";
+    const todo = buildList(state, ui.wk).items.filter((i) => !i.checked).length;
+    eyebrow = todo ? `${todo} da prendere` : "Tutto preso"; title = "Spesa";
     extra = `<button class="icon-btn" data-a="share-list" aria-label="Condividi la lista">${icon("share", 20)}</button>`;
   } else if (ui.tab === "ricette") {
     eyebrow = `${state.recipes.filter((r) => r.status !== "scartata").length} ricette`; title = "Ricette";
@@ -184,7 +185,7 @@ function viewMenu() {
     <div class="section-head"><h2>La settimana</h2><button class="link" data-a="generate">Rigenera</button></div>
     <div class="week-who"><span>A casa questa settimana</span>${weekPresence(p, true)}</div>
     <div class="week-list">${rows}</div>
-    <p class="hint center">Rigenera cambia solo i piatti non bloccati e non ancora fatti.</p>`;
+    <p class="hint center">Rigenera cambia solo i piatti da oggi in poi, non bloccati e non ancora fatti.</p>`;
 }
 
 /** Chi c'è questa settimana (prima di generare, e sopra la lista della settimana). */
@@ -287,12 +288,21 @@ function viewSpesa() {
   const { items, pantryNeeded } = buildList(state, ui.wk);
   const p = plan(state, ui.wk);
   if (!Object.keys(p.slots).length && !items.length) {
-    return `<div class="empty-card"><span class="dish-ico lg" data-tint="olive">${icon("shopping-basket", 28)}</span>
+    return `<div class="week-nav">
+      <button class="icon-btn small" data-a="wk" data-d="-7" aria-label="Settimana precedente">${icon("chevron-left", 18)}</button>
+      <div class="label"><b>${fmtWeek(ui.wk)}</b></div>
+      <button class="icon-btn small" data-a="wk" data-d="7" aria-label="Settimana successiva">${icon("chevron-right", 18)}</button></div>
+      <div class="empty-card"><span class="dish-ico lg" data-tint="olive">${icon("shopping-basket", 28)}</span>
       <h3>La lista si scrive da sola</h3><p>Prepara il menu della settimana e qui trovi tutto quello che serve, diviso per reparto.</p>
       <button class="btn primary block" data-a="tab" data-tab-to="menu">Vai al menu</button></div>`;
   }
   const done = items.filter((i) => i.checked).length, total = items.length;
   const visible = ui.hideChecked ? items.filter((i) => !i.checked) : items;
+  const label = weekLabel(ui.wk), isNow = weekDays(ui.wk).includes(today()) && today() !== ui.wk;
+  const nav = `<div class="week-nav">
+      <button class="icon-btn small" data-a="wk" data-d="-7" aria-label="Settimana precedente">${icon("chevron-left", 18)}</button>
+      <div class="label"><b>${fmtWeek(ui.wk)}</b>${label ? ` · ${label}` : ""}</div>
+      <button class="icon-btn small" data-a="wk" data-d="7" aria-label="Settimana successiva">${icon("chevron-right", 18)}</button></div>`;
   const groups = groupBy(visible, "cat").map((g) => `
     <section class="cat"><div class="cat-head">${icon(CAT_ICON[g.key] || "shopping-basket", 15)}${esc(g.label)}<span class="n">${g.items.length}</span></div>
       <div class="list-card">${g.items.map(itemRow).join("")}</div></section>`).join("");
@@ -303,7 +313,9 @@ function viewSpesa() {
       <p>Il menu le usa e le dai per presenti. Tocca quelle che mancano: finiscono in lista.</p>
       <div class="chips-wrap">${pantryNeeded.map((x) => `<button class="chip" data-a="pantry-missing" data-name="${esc(x.name)}" title="${esc(x.for.join(", "))}">${esc(x.name)}</button>`).join("")}</div>
     </details>` : "";
-  return `<div class="progress">
+  return `${nav}
+    ${isNow ? `<p class="hint" style="margin:-2px 2px 10px">Da ${DAY_LONG[dayIndex(today())].toLowerCase()} in poi: i pasti già passati o segnati come fatti non sono in lista.</p>` : ""}
+    <div class="progress">
       <div class="line"><div class="fill" style="width:${total ? Math.round((done / total) * 100) : 0}%"></div></div>
       <div class="txt"><span><b>${done}</b> di <b>${total}</b> nel carrello</span>
         ${done ? `<button class="link" data-a="hide-checked">${ui.hideChecked ? "Mostra presi" : "Nascondi presi"}</button>` : ""}</div></div>
@@ -726,8 +738,9 @@ const actions = {
   status: (d) => { ui.status = d.s; render(); },
   "hide-checked": () => { ui.hideChecked = !ui.hideChecked; render(); },
   check: (d, el) => {
-    const p = plan(state, ui.wk); p.checked[d.key] = el.checked;
-    const it = buildList(state, ui.wk).items.find((i) => i.key === d.key);
+    const p = plan(state, ui.wk), it = buildList(state, ui.wk).items.find((i) => i.key === d.key);
+    // si ricorda quanto si è preso: se poi il menu ne chiede di più, la voce torna da prendere
+    if (el.checked) p.checked[d.key] = it?.qty ?? true; else delete p.checked[d.key];
     if (it?.fromPantry) {
       const x = state.pantry.find((y) => norm(y.name) === norm(it.name));
       p.boughtPantry ||= {};
