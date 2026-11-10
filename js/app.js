@@ -107,7 +107,7 @@ function renderTop() {
     extra = `<button class="icon-btn" data-a="share-list" aria-label="Condividi la lista">${icon("share", 20)}</button>`;
   } else if (ui.tab === "ricette") {
     eyebrow = `${state.recipes.filter((r) => r.status !== "scartata").length} ricette`; title = "Ricette";
-    extra = `<button class="icon-btn" data-a="new-recipe" aria-label="Nuova ricetta">${icon("plus", 22)}</button>`;
+    extra = `<button class="icon-btn" data-a="add-recipe" aria-label="Aggiungi una ricetta">${icon("plus", 22)}</button>`;
   } else {
     const n = state.pantry.filter((x) => x.state !== "ok").length;
     eyebrow = n ? `${n} da comprare` : "Tutto in casa"; title = "Dispensa";
@@ -339,7 +339,9 @@ function viewRicette() {
   const groups = ui.meal === "cena"
     ? KIND.map(([k, l]) => `<button class="chip ${ui.kind === k ? "on" : ""}" data-a="kind" data-v="${k}">${l}<span class="count">${nIn((r) => r.meal === "cena" && kindOf(r) === k)}</span></button>`).join("")
     : state.settings.people.map((pp) => `<button class="chip ${person === pp ? "on" : ""}" data-a="person" data-v="${esc(pp)}">${esc(pp)}<span class="count">${nIn((r) => r.meal === "pranzo" && forPerson(r, pp))}</span></button>`).join("");
-  return `<div class="rtools">
+  const pending = (state.inbox || []).filter((x) => x.status === "nuovo").length;
+  return `${pending ? `<button class="inbox-banner" data-a="inbox">${icon("arrow-up-right", 18)}<span><b>${pending} ${pending === 1 ? "link" : "link"} da importare</b><small>Diventano ricette quando chiedi a Claude di importarli</small></span>${icon("chevron-right", 18)}</button>` : ""}
+    <div class="rtools">
       <label class="search">${icon("search", 18)}<input class="field" type="search" placeholder="Cerca un piatto o un ingrediente" value="${esc(ui.q)}" data-input="q" aria-label="Cerca"></label>
       <div class="seg full" role="group"><button data-a="meal" data-m="cena" aria-pressed="${ui.meal === "cena"}">Cene</button><button data-a="meal" data-m="pranzo" aria-pressed="${ui.meal === "pranzo"}">Pranzi</button></div>
       <div class="scroller">${groups}</div>
@@ -347,7 +349,7 @@ function viewRicette() {
         `<button data-a="status" data-s="${s}" aria-pressed="${ui.status === s}">${l} · ${counts(s)}</button>`).join("")}</div>
     </div>
     <div id="recipe-list"></div>
-    <p class="hint center" style="margin-top:18px"><button class="link" data-a="import">Importa ricette</button></p>`;
+    <p class="hint center" style="margin-top:18px"><button class="link" data-a="add-recipe">Aggiungi una ricetta</button></p>`;
 }
 function renderRecipeList() {
   const q = norm(ui.q);
@@ -482,7 +484,8 @@ function sheetRecipe(id) {
   openSheet(`<div class="sheet-head">${dishIco(r, "lg")}<div>
       <div class="eyebrow">${SOURCE[r.source] || ""}${r.url ? ` · <a href="${esc(r.url)}" target="_blank" rel="noopener">originale</a>` : ""}</div>
       <h2>${esc(r.title)}</h2></div></div>
-    <div class="meta" style="margin-top:12px">${metaBits(r.time, r.effort)}<span>${icon("users", 14)}${serves} ${serves === 1 ? "porzione" : "porzioni"}</span>${likes(r)}</div>
+    <div class="meta" style="margin-top:12px">${metaBits(r.time, r.effort)}<span>${icon("users", 14)}${serves} ${serves === 1 ? "porzione" : "porzioni"}</span>${likes(r)}
+      <button class="link meta-link" data-a="edit-recipe" data-id="${r.id}">${icon("pencil", 14)} Modifica</button></div>
     <p class="hint" style="margin:6px 0 0">${lastCooked(r)}</p>
     ${r.note ? `<p style="margin:12px 0 0">${esc(r.note)}</p>` : ""}
     ${(r.ingredients || []).length ? `<h3>Ingredienti</h3>${ingList(r.ingredients)}` : ""}
@@ -506,25 +509,67 @@ function sheetRecipe(id) {
     </details>`);
 }
 
-function sheetNewRecipe() {
-  openSheet(`<div class="sheet-head"><div><div class="eyebrow">Ricette</div><h2>Nuova ricetta</h2></div></div>
-    <form class="form" data-form="new-recipe" style="margin-top:16px">
-      <label>Nome<input name="title" required placeholder="Es. Pollo al limone"></label>
+const ingLine = (i) => (i.qty != null ? `${String(i.qty).replace(".", ",")} ${i.unit || "pz"} ${i.name}` : i.name);
+/** Modulo ricetta: vuoto per una nuova, precompilato per modificarne una esistente. */
+function sheetNewRecipe(r = null) {
+  const meal = r?.meal || ui.meal, kind = r ? kindOf(r) : (ui.meal === "cena" ? ui.kind : "special");
+  const person = r ? r.people?.[0] || "" : ui.person || "", eff = r?.effort || 2, st = r?.status || "da provare";
+  const opt = (v, l, cur) => `<option value="${v}" ${String(v) === String(cur) ? "selected" : ""}>${l}</option>`;
+  openSheet(`<div class="sheet-head"><div><div class="eyebrow">Ricette</div><h2>${r ? "Modifica ricetta" : "Nuova ricetta"}</h2></div></div>
+    <form class="form" data-form="${r ? "edit-recipe" : "new-recipe"}" ${r ? `data-id="${r.id}"` : ""} style="margin-top:16px">
+      <label>Nome<input name="title" required placeholder="Es. Pollo al limone" value="${esc(r?.title || "")}"></label>
       <div class="form-grid">
-        <label>Pasto<select name="meal"><option value="cena" ${ui.meal === "cena" ? "selected" : ""}>Cena</option><option value="pranzo" ${ui.meal === "pranzo" ? "selected" : ""}>Pranzo</option></select></label>
-        <label>Sforzo<select name="effort"><option value="1">Facile</option><option value="2" selected>Media</option><option value="3">Impegnativa</option></select></label>
-        <label>Tipo (cena)<select name="kind">${KIND.map(([v]) => `<option value="${v}" ${v === (ui.meal === "cena" ? ui.kind : "special") ? "selected" : ""}>${KIND_ONE[v]}</option>`).join("")}</select></label>
-        <label>Per (pranzo)<select name="person"><option value="">Entrambi</option>${state.settings.people.map((pp) => `<option ${pp === ui.person ? "selected" : ""}>${esc(pp)}</option>`).join("")}</select></label>
-        <label>Minuti<input name="time" type="number" min="0" inputmode="numeric" placeholder="30"></label>
-        <label>Porzioni<input name="serves" type="number" min="1" value="${ui.meal === "pranzo" ? 1 : 2}" inputmode="numeric"></label>
+        <label>Pasto<select name="meal">${opt("cena", "Cena", meal)}${opt("pranzo", "Pranzo", meal)}</select></label>
+        <label>Sforzo<select name="effort">${opt(1, "Facile", eff)}${opt(2, "Media", eff)}${opt(3, "Impegnativa", eff)}</select></label>
+        <label>Tipo (cena)<select name="kind">${KIND.map(([v]) => opt(v, KIND_ONE[v], kind)).join("")}</select></label>
+        <label>Per (pranzo)<select name="person">${opt("", "Entrambi", person)}${state.settings.people.map((pp) => opt(esc(pp), esc(pp), person)).join("")}</select></label>
+        <label>Minuti<input name="time" type="number" min="0" inputmode="numeric" placeholder="30" value="${r?.time ?? ""}"></label>
+        <label>Porzioni<input name="serves" type="number" min="1" value="${r?.serves || (meal === "pranzo" ? 1 : 2)}" inputmode="numeric"></label>
       </div>
-      <label>Proteina<input name="protein" placeholder="pollo, manzo, pesce…"></label>
-      <label>Ingredienti, uno per riga<textarea name="ings" rows="6" placeholder="400 g petto di pollo&#10;2 limoni&#10;1 busta insalata&#10;sale"></textarea></label>
-      <label>Come si fa, un passo per riga<textarea name="steps" rows="4"></textarea></label>
-      <label>Link (facoltativo)<input name="url" type="url" placeholder="https://…"></label>
-      <label>Stato<select name="status"><option value="da provare">Da provare: esce come ricetta nuova</option><option value="rotazione">Classico</option></select></label>
-      <button class="btn primary block">Salva ricetta</button>
+      <label>Proteina<input name="protein" placeholder="pollo, manzo, pesce…" value="${esc(r?.protein || "")}"></label>
+      <label>Ingredienti, uno per riga<textarea name="ings" rows="7" placeholder="400 g petto di pollo&#10;2 limoni&#10;1 busta insalata&#10;sale">${esc((r?.ingredients || []).map(ingLine).join("\n"))}</textarea></label>
+      ${r?.variants ? `<p class="hint" style="margin:-4px 2px 0">Le varianti (${esc(r.variants.map((v) => v.name).join(", "))}) restano come sono.</p>` : ""}
+      <label>Come si fa, un passo per riga<textarea name="steps" rows="5">${esc((r?.steps || []).join("\n"))}</textarea></label>
+      <label>Link (facoltativo)<input name="url" type="url" placeholder="https://…" value="${esc(r?.url || "")}"></label>
+      <label>Stato<select name="status">${opt("da provare", "Da provare: esce come ricetta nuova", st)}${opt("rotazione", "Classico", st)}${r ? opt("scartata", "Scartata", st) : ""}</select></label>
+      <button class="btn primary block">${r ? "Salva le modifiche" : "Salva ricetta"}</button>
     </form>`);
+}
+
+/** "+" delle ricette: incolla un link (o un testo) da importare dopo, oppure scrivi la ricetta adesso. */
+function sheetAddRecipe() {
+  openSheet(`<div class="sheet-head"><div><div class="eyebrow">Ricette</div><h2>Aggiungi una ricetta</h2></div></div>
+    <form class="form" data-form="inbox-add" style="margin-top:16px">
+      <label>Link o testo della ricetta<textarea name="v" rows="3" required placeholder="https://www.giallozafferano.it/…&#10;oppure incolla il testo, anche con una nota"></textarea></label>
+      <button class="btn primary block">${icon("arrow-up-right", 18)} Metti da parte per l'import</button>
+    </form>
+    <p class="hint" style="margin:10px 2px 0">I link messi da parte diventano ricette quando chiedi a Claude di importarli. Entrano come «da provare».</p>
+    <div class="action-list">
+      <button data-a="new-recipe">${icon("pencil", 19)}<span>Scrivila tu, adesso</span></button>
+      <button data-a="inbox">${icon("list-checks", 19)}<span>Link da importare</span><small>${(state.inbox || []).filter((x) => x.status === "nuovo").length}</small></button>
+      <button data-a="import">${icon("package", 19)}<span>Importa da JSON</span></button>
+    </div>`);
+}
+
+function inboxTitle(x) {
+  if (x.url) { try { const u = new URL(x.url); return { t: u.hostname.replace(/^www\./, ""), s: decodeURIComponent(u.pathname).replace(/[-_/]+/g, " ").trim() }; } catch { return { t: x.url, s: "" }; } }
+  return { t: (x.text || "").split("\n")[0].slice(0, 60), s: "testo incollato" };
+}
+function sheetInbox() {
+  const all = state.inbox || [];
+  const pending = all.filter((x) => x.status === "nuovo"), done = all.filter((x) => x.status === "importato"), skipped = all.filter((x) => x.status === "scartato");
+  const row = (x) => { const { t, s } = inboxTitle(x);
+    return `<div class="rec-row"><span class="t"><b>${esc(t)}</b><small>${esc([s, x.url && x.text ? x.text : "", fmtDay(x.at.slice(0, 10))].filter(Boolean).join(" · "))}</small></span>
+      ${x.url ? `<a class="icon-btn small" href="${esc(x.url)}" target="_blank" rel="noopener" aria-label="Apri">${icon("arrow-up-right", 16)}</a>` : ""}
+      <button class="icon-btn small" data-a="inbox-del" data-id="${x.id}" aria-label="Togli">${icon("trash-2", 16)}</button></div>`; };
+  openSheet(`<div class="sheet-head"><div><div class="eyebrow">Ricette</div><h2>Link da importare</h2></div></div>
+    <form class="add-field" data-form="inbox-add" style="margin-top:16px">${icon("plus", 18)}<input name="v" placeholder="Incolla un link…" autocomplete="off" aria-label="Link"><button class="btn small primary">Aggiungi</button></form>
+    <h3>In attesa · ${pending.length}</h3>
+    ${pending.length ? `<div class="list-card">${pending.map(row).join("")}</div>
+      <p class="hint" style="margin:10px 2px 0">Per importarli scrivi a Claude: «importa i link della lista ricette».</p>` : '<p class="hint">Nessun link in attesa.</p>'}
+    ${skipped.length ? `<h3>Non importati · ${skipped.length}</h3><div class="list-card">${skipped.map((x) => { const { t } = inboxTitle(x);
+      return `<div class="rec-row"><span class="t"><b>${esc(t)}</b><small>${esc(x.reason || "")}</small></span><button class="icon-btn small" data-a="inbox-del" data-id="${x.id}" aria-label="Togli">${icon("trash-2", 16)}</button></div>`; }).join("")}</div>` : ""}
+    ${done.length ? `<p class="hint" style="margin-top:16px">${done.length} già ${done.length === 1 ? "importato" : "importati"}: li trovi tra le ricette «da provare».</p>` : ""}`);
 }
 
 function sheetImport() {
@@ -667,10 +712,15 @@ const actions = {
   "recipe-del": (d) => {
     if (!confirm("Eliminare questa ricetta?")) return;
     state.recipes = state.recipes.filter((r) => r.id !== d.id);
+    (state.deleted ||= []).includes(d.id) || state.deleted.push(d.id); // non farla ricomparire con il prossimo seed
     for (const p of Object.values(state.plans)) for (const [k, s] of Object.entries(p.slots)) if (s.recipeId === d.id) delete p.slots[k];
     commit(); closeSheet();
   },
   "new-recipe": () => sheetNewRecipe(),
+  "edit-recipe": (d) => sheetNewRecipe(R(d.id)),
+  "add-recipe": () => sheetAddRecipe(),
+  inbox: () => sheetInbox(),
+  "inbox-del": (d) => { state.inbox = (state.inbox || []).filter((x) => x.id !== d.id); commit(); sheetInbox(); },
   import: () => sheetImport(),
   meal: (d) => { ui.meal = d.m; render(); },
   status: (d) => { ui.status = d.s; render(); },
@@ -744,6 +794,25 @@ const forms = {
       state.pantry.push({ name: name[0].toUpperCase() + name.slice(1), state: "ok", cat: c && c !== "altro" ? c : "dispensa" });
     }
     commit(); setTimeout(() => $("[data-form=pantry-add] input")?.focus(), 0);
+  },
+  "inbox-add": (f) => {
+    const v = String(f.get("v") || "").trim(); if (!v) return;
+    const m = v.match(/https?:\/\/\S+/);
+    const url = m ? m[0].replace(/[).,;]+$/, "") : null, text = (m ? v.replace(m[0], " ") : v).replace(/[ \t]+/g, " ").trim();
+    if (url && (state.inbox || []).some((x) => x.url === url && x.status === "nuovo")) { toast("Questo link è già in lista"); return; }
+    (state.inbox ||= []).push({ id: uid(), ...(url ? { url } : {}), ...(text ? { text } : {}), at: new Date().toISOString(), status: "nuovo" });
+    commit(); sheetInbox(); toast("Messo da parte per l'import");
+  },
+  "edit-recipe": (f, form) => {
+    const r = R(form.dataset.id); if (!r) return;
+    const known = knownCats(), meal = f.get("meal"), kind = f.get("kind"), person = f.get("person");
+    Object.assign(r, { title: f.get("title").trim(), meal, effort: Number(f.get("effort")), time: Number(f.get("time")) || null,
+      protein: f.get("protein").trim() || null, serves: Number(f.get("serves")) || r.serves || 2, status: f.get("status"),
+      ingredients: f.get("ings").split("\n").map((l) => parseIngredientLine(l, known)).filter(Boolean),
+      steps: f.get("steps").split("\n").map((s) => s.trim()).filter(Boolean), url: f.get("url").trim() || null });
+    if (meal === "cena") { r.role = kind === "special" ? "piatto" : kind; r.special = kind === "special"; delete r.people; }
+    else { delete r.role; delete r.special; if (person) r.people = [person]; else delete r.people; }
+    commit(); sheetRecipe(r.id); toast("Ricetta aggiornata");
   },
   "new-recipe": (f) => {
     const known = knownCats();

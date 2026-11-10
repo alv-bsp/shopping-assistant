@@ -226,10 +226,30 @@ RECURRING = ["3 pz Yogurt colato Fage 0%","1 conf Mirtilli","1 conf More","1 con
 PANTRY_SHOP = ["Coca Cola Zero (10 lattine)","Cornetti Tre Marie","Fonzies multipack","Pan bauletto bianco","Sottilette light","Philadelphia light"]
 recurring = [dict(ing(x), id="r-" + str(i), on=True) for i, x in enumerate(RECURRING)]
 
+# ---------------- IMPORTATE DA LINK (vedi tools/IMPORT.md) ------------------
+# tools/imported_recipes.json: { "recipes": [...], "skipped": [{ "inboxId", "url", "reason" }] }
+# Le ricette usano lo schema dell'app; ingredienti come oggetti {name, qty, unit, cat} o stringhe "400 g Nome" (nome noto).
+import os
+IMPORTED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "imported_recipes.json")
+imported = json.load(open(IMPORTED)) if os.path.exists(IMPORTED) else {"recipes": [], "skipped": []}
+done = []
+for x in imported.get("recipes", []):
+    ings = [ing(i) if isinstance(i, str) else {"name": i["name"], "qty": i.get("qty"), "unit": i.get("unit", ""), "cat": i.get("cat") or CATOF.get(i["name"], "altro")}
+            for i in x["ingredients"]]
+    r = {"id": x["id"], "title": x["title"], "meal": x["meal"], "effort": x.get("effort", 2), "time": x.get("time"), "protein": x.get("protein"),
+         "ingredients": ings, "steps": x.get("steps", []), "status": x.get("status", "da provare"), "tags": x.get("tags", []),
+         "source": "link", "url": x.get("url"), "note": x.get("note"), "history": [], "ratings": [], "serves": x.get("serves", 2)}
+    if x["meal"] == "cena": r["role"] = x.get("role", "piatto"); r["special"] = x.get("special", r["role"] == "piatto")
+    if x.get("people"): r["people"] = x["people"]
+    recipes.append(r)
+    if x.get("inboxId"): done.append({"inboxId": x["inboxId"], "recipeId": x["id"]})
+
 ids = [r["id"] for r in recipes]
 assert len(ids) == len(set(ids)), "id duplicati"
 pantry = [{"name": p, "state": "ok"} for p in PANTRY] + [{"name": p, "state": "ok", "cat": CATOF[p]} for p in PANTRY_SHOP]
-seed = {"version": 5, "recipes": recipes, "pantry": pantry, "recurring": recurring}
+SEED_VERSION = 5  # aumentalo a ogni import, altrimenti le app non aggiungono le ricette nuove
+seed = {"version": SEED_VERSION, "recipes": recipes, "pantry": pantry, "recurring": recurring,
+        "imports": {"done": done, "skipped": [{"inboxId": s["inboxId"], "reason": s.get("reason", "")} for s in imported.get("skipped", []) if s.get("inboxId")]}}
 with open(OUT, "w") as f:
     f.write("// Generato da tools/build_seed.py: ricette di casa, HelloFresh, sorprese da provare, dispensa\n")
     f.write("export default " + json.dumps(seed, ensure_ascii=False, indent=1) + ";\n")

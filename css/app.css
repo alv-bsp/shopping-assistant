@@ -414,3 +414,10 @@ body.logged-out .tabbar, body.logged-out .topbar { display: none; }
 .week-who { display: grid; gap: 8px; margin: -2px 2px 14px; font-size: .8rem; font-weight: 650; color: var(--ink-2); }
 .lunches.one { grid-template-columns: 1fr; }
 .lunches.one .lunch { min-height: 0; }
+
+/* ---------- link da importare */
+.inbox-banner { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; margin: 4px 0 12px; padding: 12px 14px; border: 0; border-radius: var(--r-md); background: var(--accent-soft); color: var(--accent); }
+.inbox-banner span { flex: 1; display: grid; gap: 1px; }
+.inbox-banner b { font-weight: 700; }
+.inbox-banner small { color: var(--ink-2); font-size: .8rem; }
+.rec-row .t small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

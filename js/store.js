@@ -24,8 +24,21 @@ function fresh() {
     recurring: s.recurring,  // spesa fissa: entra in lista ogni settimana
     plans: {},        // { [weekKey]: { slots: {"YYYY-MM-DD|cena" | "YYYY-MM-DD|pranzo|Giulia": slot}, checked, extras, boughtPantry, skipRecurring } }
     storeOf: {},      // { [nome ingrediente minuscolo]: "Esselunga" | "Iperal" }
+    inbox: [],        // link o testi di ricette da importare: { id, url, text, at, status: "nuovo"|"importato"|"scartato", recipeId, reason }
+    deleted: [],      // id di ricette del seed eliminate a mano: non vanno ripristinate dai seed successivi
     settings: { ...DEFAULT_SETTINGS },
   };
+}
+
+/** Segna come importati/scartati i link dell'inbox che il seed ha trasformato in ricette (vedi tools/IMPORT.md). */
+function applyImports(s) {
+  const done = Object.fromEntries((seed.imports?.done || []).map((x) => [x.inboxId, x]));
+  const skipped = Object.fromEntries((seed.imports?.skipped || []).map((x) => [x.inboxId, x]));
+  for (const it of s.inbox) {
+    if (it.status !== "nuovo") continue;
+    if (done[it.id]) { it.status = "importato"; it.recipeId = done[it.id].recipeId; }
+    else if (skipped[it.id]) { it.status = "scartato"; it.reason = skipped[it.id].reason; }
+  }
 }
 
 // campi "strutturali" che arrivano dal seed; stato, storia e voti restano quelli dell'utente
@@ -34,12 +47,12 @@ const SEED_FIELDS = ["title", "meal", "role", "special", "people", "serves", "ef
 export function migrate(s) {
   const v = s.seedVersion || 0;
   s.settings = { ...DEFAULT_SETTINGS, ...(s.settings || {}) };
-  s.plans ||= {}; s.storeOf ||= {}; s.pantry ||= [];
+  s.plans ||= {}; s.storeOf ||= {}; s.pantry ||= []; s.inbox ||= []; s.deleted ||= [];
   if (v < seed.version) {
     const byId = Object.fromEntries(s.recipes.map((r) => [r.id, r]));
     for (const sr of seed.recipes) {
       const r = byId[sr.id];
-      if (!r) { s.recipes.push(structuredClone(sr)); continue; }
+      if (!r) { if (!s.deleted.includes(sr.id)) s.recipes.push(structuredClone(sr)); continue; }
       const refresh = v < 2 || Object.entries(REFRESHED).some(([ver, ids]) => v < Number(ver) && ids.includes(sr.id));
       if (refresh) { // v2: nuovo modello (cene componibili, pranzi per persona): aggiorna le ricette di base
         for (const f of SEED_FIELDS) { if (sr[f] === undefined) delete r[f]; else r[f] = structuredClone(sr[f]); }
@@ -70,6 +83,7 @@ export function migrate(s) {
     s.seedVersion = seed.version;
   }
   s.recurring ||= [];
+  applyImports(s);
   return s;
 }
 

@@ -57,3 +57,19 @@ Per provarla sull'iPhone nella stessa rete: `http://<ip-del-mac>:8080`. L'instal
 ## Dopo una modifica ai file
 
 Aumenta `VERSION` in `sw.js`, altrimenti il service worker può servire la versione in cache.
+
+## Ricette da link
+
+Nell'app, Ricette → + → incolla un link (o un testo): finisce nella lista «Link da importare», sincronizzata.
+Per trasformarli in ricette basta chiedere a Claude di importarli: la procedura è in `tools/IMPORT.md`.
+
+## Test
+
+```bash
+bash tests/run.sh
+```
+
+Menu su 300 settimane, presenze, conversione dei dati salvati dalle versioni precedenti, import da link,
+sincronizzazione fra due telefoni (server finto) e interfaccia in un DOM simulato. La prima volta installa
+jsdom ed esbuild dentro `tests/`.
+

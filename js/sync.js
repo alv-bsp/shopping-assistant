@@ -1,5 +1,5 @@
 // Sincronizzazione con Supabase. Lo stato viene spezzato in righe chiave → JSON nella tabella `kv`:
-//   recipe:<id>, plan:<settimana>, pantry, recurring, settings, storeOf, meta
+//   recipe:<id>, plan:<settimana>, pantry, recurring, inbox, settings, storeOf, meta (versione del seed + ricette eliminate)
 // Si inviano solo le righe cambiate rispetto all'ultima versione nota del server (lastSynced),
 // quindi le modifiche fatte offline partono da sole quando torna la rete.
 // Conflitti: per riga, vince l'ultima scrittura. Una modifica locale non ancora inviata non viene
@@ -23,13 +23,15 @@ export function stable(v) {
   return JSON.stringify(v ?? null);
 }
 export function toRows(state) {
-  const rows = { meta: { seedVersion: state.seedVersion }, settings: state.settings, pantry: state.pantry, storeOf: state.storeOf, recurring: state.recurring || [] };
+  const rows = { meta: { seedVersion: state.seedVersion, deleted: state.deleted || [] }, settings: state.settings, pantry: state.pantry, storeOf: state.storeOf,
+    recurring: state.recurring || [], inbox: state.inbox || [] };
   for (const r of state.recipes) rows[`recipe:${r.id}`] = r;
   for (const [wk, p] of Object.entries(state.plans)) rows[`plan:${wk}`] = p;
   return rows;
 }
 export function fromRows(rows) {
-  const s = { seedVersion: rows.meta?.seedVersion || 0, settings: rows.settings, pantry: rows.pantry || [], storeOf: rows.storeOf || {}, recurring: rows.recurring, recipes: [], plans: {} };
+  const s = { seedVersion: rows.meta?.seedVersion || 0, deleted: rows.meta?.deleted || [], settings: rows.settings, pantry: rows.pantry || [], storeOf: rows.storeOf || {},
+    recurring: rows.recurring, inbox: rows.inbox || [], recipes: [], plans: {} };
   for (const [k, v] of Object.entries(rows)) {
     if (k.startsWith("recipe:")) s.recipes.push(v);
     else if (k.startsWith("plan:")) s.plans[k.slice(5)] = v;
@@ -44,7 +46,7 @@ export function applyRow(state, key, value) {
     else if (i >= 0) state.recipes[i] = value; else state.recipes.push(value);
   } else if (key.startsWith("plan:")) {
     if (value == null) delete state.plans[key.slice(5)]; else state.plans[key.slice(5)] = value;
-  } else if (key === "meta") { if (value) state.seedVersion = value.seedVersion; }
+  } else if (key === "meta") { if (value) { state.seedVersion = value.seedVersion; state.deleted = value.deleted || []; } }
   else if (value != null) state[key] = value;
 }
 

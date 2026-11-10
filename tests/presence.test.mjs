@@ -1,0 +1,23 @@
+// Chi è a casa: settimana, singoli giorni, cena fuori.
+import { app, ok, done } from "./helpers.mjs";
+const store = await app("js/store.js"), pl = await app("js/planner.js"), sh = await app("js/shopping.js");
+const { weekDays } = await app("js/util.js");
+const wk = "2026-11-09", days = weekDays(wk);
+let s = store.load(null); const p = store.plan(s, wk); p.people = ["Alessandro"]; pl.generateWeek(s, wk);
+const keys = Object.keys(p.slots);
+ok(!keys.some((k) => k.endsWith("|Giulia")) && keys.filter((k) => k.endsWith("|Alessandro")).length === 7 && keys.filter((k) => k.endsWith("|cena")).length === 7, "solo Alessandro: i suoi 7 pranzi e 7 cene");
+ok(!Object.values(p.slots).some((x) => x.surprise), "niente sorpresa se Giulia non c'è");
+const one = sh.buildList(s, wk).items; delete p.people; const two = sh.buildList(s, wk).items; p.people = ["Alessandro"];
+const A = Object.fromEntries(one.map((i) => [i.key, i.qty])), B = Object.fromEntries(two.map((i) => [i.key, i.qty]));
+const grams = Object.keys(B).filter((k) => k.endsWith("|g") && A[k] != null);
+ok(grams.length && grams.every((k) => A[k] <= B[k]) && grams.some((k) => A[k] < B[k]), "per una persona le quantità calano");
+s = store.load(null); const q = store.plan(s, wk); pl.generateWeek(s, wk);
+q.dayPeople = { [days[1]]: [] }; pl.syncPresence(s, wk, [days[1]]);
+ok(!Object.keys(q.slots).some((k) => k.startsWith(days[1])), "giorno senza nessuno: niente pasti");
+q.dayPeople[days[2]] = ["Giulia"]; pl.syncPresence(s, wk, [days[2]]);
+ok(!q.slots[pl.key(days[2], "pranzo", "Alessandro")] && q.slots[pl.key(days[2], "cena")], "solo Giulia: tolto il pranzo di Alessandro");
+delete q.dayPeople[days[2]]; pl.syncPresence(s, wk, [days[2]]);
+ok(!!q.slots[pl.key(days[2], "pranzo", "Alessandro")], "torna Alessandro: il suo pranzo si rigenera");
+const k4 = pl.key(days[3], "cena"), r4 = s.recipes.find((r) => r.id === q.slots[k4].recipeId); q.slots[k4] = { status: "fuori", locked: true };
+ok(!sh.buildList(s, wk).items.some((i) => i.for.length === 1 && i.for[0] === r4.title), "cena fuori: i suoi ingredienti escono dalla lista");
+done("presenze");
